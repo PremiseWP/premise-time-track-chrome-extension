@@ -1,0 +1,17 @@
+/**
+ * Premise Time Track Chrome Extension CSS.
+ */
+
+body {
+	width: 320px;
+	height: 430px;
+	margin: 0;
+}
+
+#ptt-iframe {
+	width: 100%;
+	height: 99.5%;
+	height: calc( 100% - 3px );
+	border: 0;
+}
+
