@@ -31,12 +31,12 @@ function init() {
 
 	console.log( ptt );
 
-	var url = phpClientUrl + '/?is_iframe=1';
+	var url = phpClientUrl;
 
 	if ( Object.keys( ptt ).length > 0 ) {
 
 		// PTT API saved, get it.
-		url += '&site_base=' + encodeURIComponent( ptt.site_base ) +
+		url += '?site_base=' + encodeURIComponent( ptt.site_base ) +
 			'&client_key=' + encodeURIComponent( ptt.client_key ) +
 			'&client_secret=' + encodeURIComponent( ptt.client_secret ) +
 			'&token_credentials=' + encodeURIComponent( ptt.token_credentials ); // ?site_base=http%3A%2F%2Flocalhost%2Ftest%2Fpremisesplitview%2F&client_key=I9aT2lBzYE2n&client_secret=0WwKpqHwgoVOgwwI7HgyjdAItd4DLZd8wEIQ2R6eRp0Lvqd8&token_credentials=O%3A49%3A%22League%5COAuth1%5CClient%5CCredentials%5CTokenCredentials%22%3A2%3A%7Bs%3A13%3A%22%00%2A%00identifier%22%3Bs%3A24%3A%229xMnHuPSmJrLKaWlyEDBytRu%22%3Bs%3A9%3A%22%00%2A%00secret%22%3Bs%3A48%3A%22z66bCzlBQX9smdjsx3ROS89ltMq7UZaej6YJ56dC3FmiZDbg%22%3B%7D
@@ -58,7 +58,7 @@ function init() {
 
 			// This will successfully queue a message to be sent to the iframe, assuming
 			// the window hasn't changed its location.
-			this.contentWindow.postMessage("ptt", url);
+			this.contentWindow.postMessage("ptt", '*');
 
 			window.addEventListener("message", receiveMessage, false);
 		});
@@ -70,7 +70,7 @@ function receiveMessage(event) {
 	console.log(event.origin);
 	// Do we trust the sender of this message?  (might be
 	// different from what we originally opened, for example).
-	if (event.origin + '/?is_iframe=1' !== phpClientUrl)
+	if (event.origin !== phpClientUrl)
 		return;
 
 	// event.source is iframe
