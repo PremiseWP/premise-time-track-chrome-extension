@@ -8,6 +8,6 @@ This Chrome extension is mainly a wrapper for the client (called inside an ifram
 
 ## Setup
 
-Edit the `phpClientUrl` in the `premise-time-track.js` file.
+Edit the `phpClientUrl` variable in the `premise-time-track.js` file.
 
-Add permissions for both the client URL and the Wordpress site in the `manifest.json` file.
+Add permissions for both the client URL and the Wordpress site to the `manifest.json` file.
