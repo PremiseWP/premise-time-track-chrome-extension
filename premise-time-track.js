@@ -70,7 +70,7 @@ function receiveMessage(event) {
 	console.log(event.origin);
 	// Do we trust the sender of this message?  (might be
 	// different from what we originally opened, for example).
-	if (event.origin !== phpClientUrl)
+	if (phpClientUrl.indexOf(event.origin) !== 0)
 		return;
 
 	// event.source is iframe
