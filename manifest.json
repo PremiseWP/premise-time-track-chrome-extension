@@ -12,9 +12,7 @@
     "default_title": "Start tracking time!"
   },
   "permissions": [
-    "storage", // localStorage.
-    // 'X-Frame-Options' set to 'SAMEORIGIN' on wp-login.php workaround.
-    // http://stackoverflow.com/questions/15532791/getting-around-x-frame-options-deny-in-a-chrome-extension#15534822
+    "storage",
     "*://*/*",
     "webRequest",
     "webRequestBlocking"
