@@ -97,6 +97,8 @@ function receiveMessage(event) {
 
 	localStorage.setItem( 'ptt', ptt );
 
+	alert('You have successfully been authenticated! Please open the extension again.');
+
 	// Close tab!
 	chrome.tabs.remove( tabID, function() {
 
