@@ -8,6 +8,15 @@ body {
 	margin: 0;
 }
 
+html,
+body.auth-tab {
+	height: 100%;
+}
+
+body.auth-tab {
+	width: inherit;
+}
+
 #ptt-iframe {
 	width: 100%;
 	height: 99.5%;
@@ -15,3 +24,6 @@ body {
 	border: 0;
 }
 
+.auth-tab #ptt-iframe {
+	height: 100%;
+}
