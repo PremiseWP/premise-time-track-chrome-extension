@@ -3,8 +3,7 @@
  */
 
 body {
-	width: 340px;
-	height: 430px;
+	width: 334px;
 	margin: 0;
 }
 
@@ -26,8 +25,4 @@ body.auth-tab {
 	width: 100%;
 	height: 100%;
 	border: 0;
-}
-
-.auth-tab #ptt-iframe {
-	height: 100%;
 }
