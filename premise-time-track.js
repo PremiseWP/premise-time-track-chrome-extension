@@ -58,13 +58,21 @@ function init() {
 		$('body').addClass('auth-tab');
 	}
 
-	// Launch Iframe.
 	// Add spinner while iframe is loading: NOT WORKING...
-	document.body.innerHTML = '<iframe src="' + url + '" id="ptt-iframe" class="loading-spinner"></iframe>';
+	document.body.innerHTML = '<div class="loading-spinner"><img src="icon.png" /></div>';
 
-	var removeLoadingSpinner = function() {
+	window.setTimeout(launchIframe( url ), 1000);
 
-		$('#ptt-iframe').removeClass('loading-spinner');
+}
+
+
+function launchIframe( url ) {
+	// Launch Iframe.
+	document.body.innerHTML += '<iframe src="' + url + '" id="ptt-iframe"></iframe>';
+
+	var removeLoadingSpinner = function () {
+
+		$('.loading-spinner').remove();
 
 		// Remove callback.
 		callbacks.remove( removeLoadingSpinner );

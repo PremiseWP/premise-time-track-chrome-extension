@@ -29,7 +29,7 @@ body.auth-tab {
 }
 
 .loading-spinner {
-	background-image: url("icon.png");
-	background-repeat: no-repeat;
-	background-position: 50% 50%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
