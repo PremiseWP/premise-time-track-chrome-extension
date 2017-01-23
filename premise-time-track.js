@@ -5,7 +5,8 @@
 // Global vars.
 var ptt,
 	tabID,
-	phpClientUrl = 'http://tt-wp-api.vallgroup.com/premise-time-track-client'; // Without trailing slash!
+	//phpClientUrl = 'http://tt-wp-api.vallgroup.com/premise-time-track-client'; // Without trailing slash!
+	phpClientUrl = 'http://localhost:8080'; // Without trailing slash!
 
 // Init on load.
 window.onload = init;
@@ -57,8 +58,22 @@ function init() {
 		$('body').addClass('auth-tab');
 	}
 
+	// Add spinner while iframe is loading: NOT WORKING...
+	document.body.innerHTML = '<div class="loading-spinner"><img src="icon.png" /></div>';
+
 	// Launch Iframe.
-	document.body.innerHTML = '<iframe src="' + url + '" id="ptt-iframe"></iframe>';
+	document.body.innerHTML += '<iframe src="' + url + '" id="ptt-iframe"></iframe>';
+
+	var removeLoadingSpinner = function () {
+
+		$('.loading-spinner').remove();
+
+		// Remove callback.
+		callbacks.remove( removeLoadingSpinner );
+	};
+
+	// Remove spinner.
+	$('#ptt-iframe').load(removeLoadingSpinner);
 
 	if ( Object.keys( ptt ).length < 2 ) {
 
