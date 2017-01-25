@@ -5,8 +5,8 @@
 // Global vars.
 var ptt,
 	tabID,
-	//phpClientUrl = 'http://tt-wp-api.vallgroup.com/premise-time-track-client'; // Without trailing slash!
-	phpClientUrl = 'http://localhost:8080'; // Without trailing slash!
+	phpClientUrl = 'http://tt-wp-api.vallgroup.com/premise-time-track-client'; // Without trailing slash!
+	// phpClientUrl = 'http://localhost:8080'; // Without trailing slash!
 
 // Init on load.
 window.onload = init;
