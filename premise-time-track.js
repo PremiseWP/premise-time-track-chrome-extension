@@ -6,7 +6,7 @@
 var ptt,
 	tabID,
 	phpClientUrl = 'http://tt-wp-api.vallgroup.com/premise-time-track-client'; // Without trailing slash!
-	// phpClientUrl = 'http://localhost:8080'; // Without trailing slash!
+	//phpClientUrl = 'http://localhost:8080'; // Without trailing slash!
 
 // Init on load.
 window.onload = init;
@@ -59,9 +59,11 @@ function init() {
 	}
 
 	// Add spinner while iframe is loading: NOT WORKING...
-	document.body.innerHTML = '<div class="loading-spinner"><img src="icon.png" /></div>';
+	//document.body.innerHTML = '<div class="loading-spinner"><img src="icon.png" /></div>';
+	document.body.innerHTML = '';
 
-	window.setTimeout(launchIframe( url ), 1000);
+	//window.setTimeout(launchIframe( url ), 1000);
+	launchIframe( url );
 
 }
 
