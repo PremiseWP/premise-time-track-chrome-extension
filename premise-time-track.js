@@ -72,7 +72,7 @@ function launchIframe( url ) {
 	// Launch Iframe.
 	document.body.innerHTML += '<iframe src="' + url + '" id="ptt-iframe"></iframe>';
 
-	var removeLoadingSpinner = function () {
+	/*var removeLoadingSpinner = function () {
 
 		$('.loading-spinner').remove();
 
@@ -81,7 +81,7 @@ function launchIframe( url ) {
 	};
 
 	// Remove spinner.
-	$('#ptt-iframe').load(removeLoadingSpinner);
+	$('#ptt-iframe').load(removeLoadingSpinner);*/
 
 	if ( Object.keys( ptt ).length < 2 ) {
 
