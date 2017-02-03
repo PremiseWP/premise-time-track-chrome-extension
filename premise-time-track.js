@@ -102,6 +102,15 @@ function launchIframe( url ) {
 		});
 
 	}
+	else
+	{
+		$('#ptt-iframe').load(function(){
+			this.contentWindow.postMessage("reset", '*');
+
+			// Reset.
+			window.addEventListener("message", receiveResetMessage, false);
+		});
+	}
 }
 
 function receiveMessage(event) {
@@ -129,6 +138,29 @@ function receiveMessage(event) {
 		// http://stackoverflow.com/questions/10479679/how-can-i-open-my-extensions-pop-up-with-javascript
 	});
 }
+
+
+function receiveResetMessage(event) {
+	console.log(event.origin);
+	// Do we trust the sender of this message?  (might be
+	// different from what we originally opened, for example).
+	if (phpClientUrl.indexOf(event.origin) !== 0)
+		return;
+
+	// console.log(event.data);
+
+	if ( event.data === 'reset' )
+	{
+		// Remove local storage, reset ptt!
+		localStorage.removeItem( 'ptt' );
+
+		// Close popup.
+		window.close();
+
+		alert('The extension was reset! Please open the extension again and authenticate.');
+	}
+}
+
 
 
 // 'X-Frame-Options' set to 'SAMEORIGIN' on wp-login.php workaround.
