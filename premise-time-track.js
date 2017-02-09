@@ -137,6 +137,8 @@ function receiveMessage(event) {
 		// Open popup? You can't...
 		// http://stackoverflow.com/questions/10479679/how-can-i-open-my-extensions-pop-up-with-javascript
 	});
+
+	window.removeEventListener("message", receiveMessage);
 }
 
 
@@ -159,6 +161,8 @@ function receiveResetMessage(event) {
 
 		alert('The extension was reset! Please open the extension again and authenticate.');
 	}
+
+	window.removeEventListener("message", receiveResetMessage);
 }
 
 
