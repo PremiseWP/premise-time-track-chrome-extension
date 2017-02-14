@@ -125,6 +125,10 @@ function receiveMessage(event) {
 	// event.source is iframe
 	// event.data is "hi there yourself!  the secret response is: rheeeeet!"
 	// console.log(event.data);
+
+	if ( event.data === 'reset' )
+		return;
+
 	ptt = event.data;
 
 	localStorage.setItem( 'ptt', ptt );
