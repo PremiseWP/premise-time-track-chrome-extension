@@ -2,16 +2,15 @@
  * Premise Time Track Chrome Extension Javascripts.
  */
 
-// Init on load.
-// init();
-
-// Global vars
+// Global vars.
 var ptt,
 	tabID,
-	phpClientUrl = ''; //http://tt-wp-api.vallgroup.com/premise-time-track-client'; // Without trailing slash!
+	phpClientUrl = 'http://tt-wp-api.vallgroup.com/premise-time-track-client'; // Without trailing slash!
 	//phpClientUrl = 'http://localhost:8080'; // Without trailing slash!
 
-// get the object storedin the local storage
+// Init on load.
+window.onload = init;
+
 function getStoredObject( objectName ) {
 	if ( objectName &&
 		localStorage.getItem( objectName ) ) {
@@ -21,56 +20,11 @@ function getStoredObject( objectName ) {
 		// New!
 		return {};
 	}
-};
+}
 
-// set the stored object in local storeage
 function setStoredObject( objectName, object ) {
 	// Set!
 	localStorage.setItem( objectName, JSON.stringify( object ) );
-};
-
-// get the stored object in JSON format along with the url for client
-function getPTT( format ) {
-	ptt = getStoredObject( 'ptt' );
-
-	// console.log( ptt );
-
-	phpClientUrl  = 'http://ptt.client';
-
-	if ( Object.keys( ptt ).length > 1 ) {
-
-		// PTT API saved, get it.
-		phpClientUrl += '?site_base=' + encodeURIComponent( ptt.site_base ) +
-			'&client_key=' + encodeURIComponent( ptt.client_key ) +
-			'&client_secret=' + encodeURIComponent( ptt.client_secret ) +
-			'&token_credentials=' + encodeURIComponent( ptt.token_credentials ); // ?site_base=http%3A%2F%2Flocalhost%2Ftest%2Fpremisesplitview%2F&client_key=I9aT2lBzYE2n&client_secret=0WwKpqHwgoVOgwwI7HgyjdAItd4DLZd8wEIQ2R6eRp0Lvqd8&token_credentials=O%3A49%3A%22League%5COAuth1%5CClient%5CCredentials%5CTokenCredentials%22%3A2%3A%7Bs%3A13%3A%22%00%2A%00identifier%22%3Bs%3A24%3A%229xMnHuPSmJrLKaWlyEDBytRu%22%3Bs%3A9%3A%22%00%2A%00secret%22%3Bs%3A48%3A%22z66bCzlBQX9smdjsx3ROS89ltMq7UZaej6YJ56dC3FmiZDbg%22%3B%7D
-	}
-	return {
-		stored: ptt,
-		url: phpClientUrl
-	};
-};
-
-function tryNewTimer(e) {
-	e.preventDefault();
-
-	return false;
-};
-
-
-function loadTimers() {
-	console.log('ran');
-	$.ajax({
-		url: phpClientUrl,
-		dataType: 'JSON',
-		success: function(r) {
-			console.log('finished runing' + r)
-			return r;
-		},
-		error: function(e) {
-			return e;
-		}
-	});
 }
 
 function init() {
@@ -79,22 +33,22 @@ function init() {
 
 	console.log( ptt );
 
-	phpClientUrl  = 'http://ptt.client';
+	var url = phpClientUrl;
 
 	if ( Object.keys( ptt ).length > 1 ) {
 
 		// PTT API saved, get it.
-		phpClientUrl += '?site_base=' + encodeURIComponent( ptt.site_base ) +
+		url += '?site_base=' + encodeURIComponent( ptt.site_base ) +
 			'&client_key=' + encodeURIComponent( ptt.client_key ) +
 			'&client_secret=' + encodeURIComponent( ptt.client_secret ) +
 			'&token_credentials=' + encodeURIComponent( ptt.token_credentials ); // ?site_base=http%3A%2F%2Flocalhost%2Ftest%2Fpremisesplitview%2F&client_key=I9aT2lBzYE2n&client_secret=0WwKpqHwgoVOgwwI7HgyjdAItd4DLZd8wEIQ2R6eRp0Lvqd8&token_credentials=O%3A49%3A%22League%5COAuth1%5CClient%5CCredentials%5CTokenCredentials%22%3A2%3A%7Bs%3A13%3A%22%00%2A%00identifier%22%3Bs%3A24%3A%229xMnHuPSmJrLKaWlyEDBytRu%22%3Bs%3A9%3A%22%00%2A%00secret%22%3Bs%3A48%3A%22z66bCzlBQX9smdjsx3ROS89ltMq7UZaej6YJ56dC3FmiZDbg%22%3B%7D
 	} else if ( ! ptt.auth_tab ||
 			document.URL.indexOf( 'auth-tab' ) < 0 ) {
 
-		// Move authorization process to   tab!
+		// Move authorization process to new tab!
 		chrome.tabs.create({url: document.URL + '?auth-tab=1'}, function(tab){
 			ptt.auth_tab = tab.id;
-			// console.log(ptt.auth_tab);
+			console.log(ptt.auth_tab);
 			setStoredObject( 'ptt', ptt );
 		});
 
@@ -104,26 +58,12 @@ function init() {
 		$('body').addClass('auth-tab');
 	}
 
-	// $('.loading').hide();
-	// $('.loaded').fadeIn();
-
-	// $.ajax({
-	// 	url: url,
-	// 	dataType: 'JSON',
-	// 	success: function(r) {
-	// 		console.log( r );
-	// 		$('.ptt-app').load('/view/test.html', ptt );
-	// 	},
-	// 	error: function(e) {
-	// 		console.log( e );
-	// 	}
-	// });
-
 	// Add spinner while iframe is loading: NOT WORKING...
-	//document.body.innerHTML = '';
+	//document.body.innerHTML = '<div class="loading-spinner"><img src="icon.png" /></div>';
+	document.body.innerHTML = '';
 
 	//window.setTimeout(launchIframe( url ), 1000);
-	// launchIframe( url );
+	launchIframe( url );
 
 }
 
@@ -233,3 +173,20 @@ function receiveResetMessage(event) {
 
 // 'X-Frame-Options' set to 'SAMEORIGIN' on wp-login.php workaround.
 // http://stackoverflow.com/questions/15532791/getting-around-x-frame-options-deny-in-a-chrome-extension#15534822
+chrome.webRequest.onHeadersReceived.addListener(
+	function(info) {
+		var headers = info.responseHeaders;
+		for (var i=headers.length-1; i>=0; --i) {
+			var header = headers[i].name.toLowerCase();
+			if (header == 'x-frame-options' || header == 'frame-options') {
+				headers.splice(i, 1); // Remove header
+			}
+		}
+		return {responseHeaders: headers};
+	},
+	{
+		urls: [ '*://*/*' ], // Pattern to match all http(s) pages
+		types: [ 'sub_frame' ]
+	},
+	['blocking', 'responseHeaders']
+);
