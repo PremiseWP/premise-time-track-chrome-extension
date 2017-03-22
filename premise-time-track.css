@@ -6,6 +6,9 @@ body {
 	width: 336px;
 	margin: 0;
 	background-color: #fff;
+	color: #444;
+	font-size: 16px;
+	line-height: 1.45;
 }
 
 html,
@@ -32,4 +35,20 @@ body.auth-tab {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+}
+
+
+.btn {
+	color: #444FFF;
+	display: inline-block;
+	text-decoration: none;
+	padding: 10px 30px;
+	border: 1px solid #ececec;
+	border-radius: 3px;
+	background-color: #fff;
+}
+
+.btn.action {
+	background-color: #206FCC;
+	color: #FFFFFF !important;
 }

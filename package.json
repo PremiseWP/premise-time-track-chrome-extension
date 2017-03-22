@@ -1,0 +1,32 @@
+{
+  "name": "premise-time-track-chrome-extension",
+  "version": "1.0.0",
+  "description": "Chrome extension for the [Premise Time Tracker](https://github.com/PremiseWP/premise-time-track/) Wordpress plugin.",
+  "main": "ptt-react-app.js",
+  "scripts": {
+    "build": "webpack",
+    "babel-v": "babel --version",
+    "watch": "babel src --watch --out-file ptt-react-app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PremiseWP/premise-time-track-chrome-extension.git"
+  },
+  "author": "Premise WP",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/PremiseWP/premise-time-track-chrome-extension/issues"
+  },
+  "homepage": "https://github.com/PremiseWP/premise-time-track-chrome-extension#readme",
+  "dependencies": {
+    "react": "^15.4.2",
+    "react-dom": "^15.4.2"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.0",
+    "babel-preset-env": "^1.2.2",
+    "babel-preset-es2015": "^6.24.0",
+    "babel-preset-react": "^6.23.0",
+    "webpack": "^2.2.1"
+  }
+}

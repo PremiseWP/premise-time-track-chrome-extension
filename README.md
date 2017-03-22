@@ -33,3 +33,9 @@ If you experience this issue, please check your Wordpress installation for _cach
 
 In case the Wordpress page you are trying to view is restricted due to a security rule.
 Please disable any `mod_security` (Apache) rule blocking `iframe` on you Wordpress server.
+
+## Uses
+
+* React.js
+* Babel
+* Webpack
