@@ -29,41 +29,50 @@ class NewTimerBtn extends React.Component {
 class MyTimeBtn extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = {text: 'View My Time', posts: []}
+
+		this.state = {
+			title: 'Loading...',
+			query: {
+				posts: [],
+				taxonomies: {}
+			}
+		};
+
 		this.handleClick = this.handleClick.bind(this);
 	}
 
 	componentDidMount() {
 		const ptt = getPTT();
-		console.log( ptt );
-		fetch( ptt.url, {dataType: 'JSON'} )
+
+		console.log('begin fecth..')
+
+		let _this = this;
+		fetch( ptt.url )
 			.then( (r) => {
-				const posts = r;
-				console.log(posts.json());
-				// this.setState({posts})
-			})
+				r.json().then( (json) => {
+					console.log(json);
+					this.setState({title: 'Loaded', query: json});
+				});
+			});
+
 	}
 
 	handleClick() {
-		const form = <NewTimerForm />;
-		ReactDOM.render(
-			<IntoApp><NewTimerForm /></IntoApp>,
-			document.getElementById('app')
-		);
-
+		// handle
 	}
 
 	render() {
+		// Iterate through the posts, build list
+		const listPosts = this.state.query.posts.map( (p) =>
+			<li key={p.id}>{p.title.rendered}</li>
+		);
 		return (
 			<div>
-				<button onClick={this.handleClick}>
-					{this.state.text}
-				</button>
+				<h3>{this.state.title}</h3>
 				<ul>
-					{this.state.posts.map( (p) => {
-						<li key={p.ID}>{p.post_title}</li>
-					})}
+					{listPosts}
 				</ul>
+				Count: {this.state.query.posts.length}
 			</div>
 		);
 	}

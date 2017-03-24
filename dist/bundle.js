@@ -108,11 +108,11 @@ var NewTimerBtn = function (_React$Component) {
 	function NewTimerBtn(props) {
 		_classCallCheck(this, NewTimerBtn);
 
-		var _this = _possibleConstructorReturn(this, (NewTimerBtn.__proto__ || Object.getPrototypeOf(NewTimerBtn)).call(this, props));
+		var _this2 = _possibleConstructorReturn(this, (NewTimerBtn.__proto__ || Object.getPrototypeOf(NewTimerBtn)).call(this, props));
 
-		_this.state = { text: 'New Timer' };
-		_this.handleClick = _this.handleClick.bind(_this);
-		return _this;
+		_this2.state = { text: 'New Timer' };
+		_this2.handleClick = _this2.handleClick.bind(_this2);
+		return _this2;
 	}
 
 	_createClass(NewTimerBtn, [{
@@ -145,56 +145,68 @@ var MyTimeBtn = function (_React$Component2) {
 	function MyTimeBtn(props) {
 		_classCallCheck(this, MyTimeBtn);
 
-		var _this2 = _possibleConstructorReturn(this, (MyTimeBtn.__proto__ || Object.getPrototypeOf(MyTimeBtn)).call(this, props));
+		var _this3 = _possibleConstructorReturn(this, (MyTimeBtn.__proto__ || Object.getPrototypeOf(MyTimeBtn)).call(this, props));
 
-		_this2.state = { text: 'View My Time', posts: [] };
-		_this2.handleClick = _this2.handleClick.bind(_this2);
-		return _this2;
+		_this3.state = {
+			title: 'Loading...',
+			query: {
+				posts: [],
+				taxonomies: {}
+			}
+		};
+
+		_this3.handleClick = _this3.handleClick.bind(_this3);
+		return _this3;
 	}
 
 	_createClass(MyTimeBtn, [{
 		key: 'componentDidMount',
 		value: function componentDidMount() {
+			var _this4 = this;
+
 			var ptt = getPTT();
-			console.log(ptt);
-			fetch(ptt.url, { dataType: 'JSON' }).then(function (r) {
-				var posts = r;
-				console.log(posts.json());
-				// this.setState({posts})
+
+			console.log('begin fecth..');
+
+			var _this = this;
+			fetch(ptt.url).then(function (r) {
+				r.json().then(function (json) {
+					console.log(json);
+					_this4.setState({ title: 'Loaded', query: json });
+				});
 			});
 		}
 	}, {
 		key: 'handleClick',
 		value: function handleClick() {
-			var form = _react2.default.createElement(NewTimerForm, null);
-			_reactDom2.default.render(_react2.default.createElement(
-				IntoApp,
-				null,
-				_react2.default.createElement(NewTimerForm, null)
-			), document.getElementById('app'));
+			// handle
 		}
 	}, {
 		key: 'render',
 		value: function render() {
+			// Iterate through the posts, build list
+			var listPosts = this.state.query.posts.map(function (p) {
+				return _react2.default.createElement(
+					'li',
+					{ key: p.id },
+					p.title.rendered
+				);
+			});
 			return _react2.default.createElement(
 				'div',
 				null,
 				_react2.default.createElement(
-					'button',
-					{ onClick: this.handleClick },
-					this.state.text
+					'h3',
+					null,
+					this.state.title
 				),
 				_react2.default.createElement(
 					'ul',
 					null,
-					this.state.posts.map(function (p) {
-						_react2.default.createElement(
-							'li',
-							{ key: p.ID },
-							p.post_title
-						);
-					})
-				)
+					listPosts
+				),
+				'Count: ',
+				this.state.query.posts.length
 			);
 		}
 	}]);
