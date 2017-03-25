@@ -1,20 +1,24 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+/**
+ * New timer button
+ *
+ * Dsiplays the new timer button and handles click event
+ */
 class NewTimerBtn extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {text: 'New Timer'}
+
 		this.handleClick = this.handleClick.bind(this);
 	}
 
 	handleClick() {
-		const form = <NewTimerForm />;
 		ReactDOM.render(
-			<IntoApp><NewTimerForm /></IntoApp>,
+			<NewTimerForm />,
 			document.getElementById('app')
 		);
-
 	}
 
 	render() {
@@ -26,7 +30,58 @@ class NewTimerBtn extends React.Component {
 	}
 }
 
-class MyTimeBtn extends React.Component {
+/**
+ * New timer form
+ *
+ * This form handles creating and editing timers.
+ */
+class NewTimerForm extends React.Component {
+	constructor(props) {
+		super(props);
+
+		this.state = {};
+
+		this.handleSubmit = this.handleSubmit.bind(this);
+	}
+
+	handleSubmit(e) {
+		console.log(e.target.action);
+
+		fetch( e.target.action )
+			.then( r =>
+				console.log( r )
+			);
+		e.preventDefault();
+	}
+
+	render() {
+		return (
+			<form action="http://ptt.client?step=ptt-save" method="post" onSubmit={this.handleSubmit}>
+				<div className="hidden-fields">
+					<input type="hidden" name="ptt-id" value="" />
+				</div>
+				<div>
+					<input type="text" name="ptt[title]" />
+				</div>
+				<div>
+				<textarea name="ptt[content]"></textarea>
+				</div>
+				<div>
+					<input type="date" name="ptt[date]" />
+				</div>
+				<div>
+					<input type="number" name="ptt[pwptt_hours]" min="0" step="0.25" placeholder="1.75" />
+				</div>
+				<div>
+					<input type="submit" value="submit" />
+				</div>
+			</form>
+		);
+	}
+}
+
+
+class LoadTimers extends React.Component {
 	constructor(props) {
 		super(props);
 
@@ -49,6 +104,7 @@ class MyTimeBtn extends React.Component {
 		let _this = this;
 		fetch( ptt.url )
 			.then( (r) => {
+				// this is a promise. Set state once pormise has settled
 				r.json().then( (json) => {
 					console.log(json);
 					this.setState({title: 'Loaded', query: json});
@@ -78,46 +134,14 @@ class MyTimeBtn extends React.Component {
 	}
 }
 
-class NewTimerForm extends React.Component {
-	render() {
-		return (
-			<form>
-			<div>
-				<input type="text" name="title" />
-			</div>
-			<div>
-			<textarea name="content"></textarea>
-			</div>
-			<div>
-				<input type="date" name="post-date" />
-			</div>
-			<div>
-				<input type="number" name="ptt-time" min="0" step="0.25" placeholder="1.75" />
-			</div>
-			<div>
-				<input type="submit" value="submit" />
-			</div>
-			</form>
-		);
-	}
-}
-
+// output the dashboard
 ReactDOM.render(
 	<NewTimerBtn />,
 	document.getElementById('dashboard')
 );
 
+// output posts
 ReactDOM.render(
-	<MyTimeBtn />,
-	document.getElementById('dashboard')
+	<LoadTimers />,
+	document.getElementById('root')
 );
-
-
-function IntoApp(props) {
-	const _class = props.className || '';
-	return (
-		<div className={'app-inner ' + _class }>
-			{props.children}
-		</div>
-	);
-}
