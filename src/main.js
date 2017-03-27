@@ -1,6 +1,55 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+// get the stored object in JSON format along with the url for client
+class PTT extends React.Component {
+	constructor(props) {
+		super(props);
+
+		this.state = {
+			ptt: this.getStored(),
+			url: ''
+		}
+	}
+
+	render() {
+		return ();
+	}
+
+	getStored() {
+		if ( localStorage.getItem( 'ptt' ) ) {
+			// Get!
+			return JSON.parse( localStorage.getItem( ptt ) );
+		} else {
+			// New!
+			return {};
+		}
+	}
+
+	setStored( object ) {
+		localStorage.setItem( 'ptt', JSON.stringify( object ) );
+	}
+
+	ptt = getStoredObject( 'ptt' );
+
+	console.log( ptt );
+
+	phpClientUrl  = 'http://ptt.client';
+
+	if ( Object.keys( ptt ).length > 1 ) {
+
+		// PTT API saved, get it.
+		phpClientUrl += '?site_base=' + encodeURIComponent( ptt.site_base ) +
+			'&client_key=' + encodeURIComponent( ptt.client_key ) +
+			'&client_secret=' + encodeURIComponent( ptt.client_secret ) +
+			'&token_credentials=' + encodeURIComponent( ptt.token_credentials ); // ?site_base=http%3A%2F%2Flocalhost%2Ftest%2Fpremisesplitview%2F&client_key=I9aT2lBzYE2n&client_secret=0WwKpqHwgoVOgwwI7HgyjdAItd4DLZd8wEIQ2R6eRp0Lvqd8&token_credentials=O%3A49%3A%22League%5COAuth1%5CClient%5CCredentials%5CTokenCredentials%22%3A2%3A%7Bs%3A13%3A%22%00%2A%00identifier%22%3Bs%3A24%3A%229xMnHuPSmJrLKaWlyEDBytRu%22%3Bs%3A9%3A%22%00%2A%00secret%22%3Bs%3A48%3A%22z66bCzlBQX9smdjsx3ROS89ltMq7UZaej6YJ56dC3FmiZDbg%22%3B%7D
+	}
+	return {
+		stored: ptt,
+		url: phpClientUrl
+	};
+};
+
 /**
  * New timer button
  *
@@ -97,9 +146,7 @@ class LoadTimers extends React.Component {
 	}
 
 	componentDidMount() {
-		const ptt = getPTT();
-
-		console.log('begin fecth..')
+		console.log(ptt)
 
 		let _this = this;
 		fetch( ptt.url )

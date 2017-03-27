@@ -33,7 +33,7 @@ function setStoredObject( objectName, object ) {
 function getPTT( format ) {
 	ptt = getStoredObject( 'ptt' );
 
-	// console.log( ptt );
+	console.log( ptt );
 
 	phpClientUrl  = 'http://ptt.client';
 
