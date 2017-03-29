@@ -19,47 +19,266 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+var DiscoverSite = function (_React$Component) {
+	_inherits(DiscoverSite, _React$Component);
+
+	function DiscoverSite(props) {
+		_classCallCheck(this, DiscoverSite);
+
+		var _this2 = _possibleConstructorReturn(this, (DiscoverSite.__proto__ || Object.getPrototypeOf(DiscoverSite)).call(this, props));
+
+		_this2.state = {
+			onSubmit: props.onSubmit
+		};
+		return _this2;
+	}
+
+	_createClass(DiscoverSite, [{
+		key: 'render',
+		value: function render() {
+			return _react2.default.createElement(
+				'div',
+				null,
+				_react2.default.createElement(
+					'form',
+					{ onSubmit: this.state.onSubmit },
+					_react2.default.createElement('input', { type: 'hidden', value: 'discover', name: 'step', id: 'step' }),
+					_react2.default.createElement('input', { type: 'url', name: 'uri', id: 'uri', defaultValue: 'http://time.vallgroup.com' }),
+					_react2.default.createElement('br', null),
+					_react2.default.createElement('input', { type: 'submit' })
+				)
+			);
+		}
+	}]);
+
+	return DiscoverSite;
+}(_react2.default.Component);
+
+var DiscoverCredentials = function (_React$Component2) {
+	_inherits(DiscoverCredentials, _React$Component2);
+
+	function DiscoverCredentials(props) {
+		_classCallCheck(this, DiscoverCredentials);
+
+		var _this3 = _possibleConstructorReturn(this, (DiscoverCredentials.__proto__ || Object.getPrototypeOf(DiscoverCredentials)).call(this, props));
+
+		_this3.state = {
+			onSubmit: props.onSubmit,
+			siteBase: props.siteBase,
+			siteAuthUrls: props.siteAuthUrls
+		};
+		return _this3;
+	}
+
+	_createClass(DiscoverCredentials, [{
+		key: 'render',
+		value: function render() {
+			return _react2.default.createElement(
+				'div',
+				null,
+				_react2.default.createElement(
+					'form',
+					{ action: 'http://ptt.client', method: 'GET', onSubmit: this.state.onSubmit },
+					_react2.default.createElement('input', { type: 'hidden', value: 'preauth', name: 'step', id: 'step' }),
+					_react2.default.createElement('input', { type: 'hidden', value: this.state.siteBase, name: 'site_base', id: 'site_base' }),
+					_react2.default.createElement('input', { type: 'hidden', value: JSON.stringify(this.state.siteAuthUrls), name: 'site_auth_urls', id: 'site_auth_urls' }),
+					_react2.default.createElement('input', { type: 'hidden', value: window.location, name: 'site_referrer', id: 'site_referrer' }),
+					_react2.default.createElement('input', { type: 'text', name: 'client_key', id: 'key', defaultValue: 'zyzSVcThUzvr' }),
+					_react2.default.createElement('br', null),
+					_react2.default.createElement('input', { type: 'text', name: 'client_secret', id: 'secret', defaultValue: 'kvdxdEEZjIsJfM6fZOHhbC0etrPBVXvotfoh0JiCzBCHhgSN' }),
+					_react2.default.createElement('input', { type: 'submit' })
+				)
+			);
+		}
+	}]);
+
+	return DiscoverCredentials;
+}(_react2.default.Component);
+
+/**
+ * Get stored object
+ */
+
+
+var Discover = function (_React$Component3) {
+	_inherits(Discover, _React$Component3);
+
+	function Discover(props) {
+		_classCallCheck(this, Discover);
+
+		var _this4 = _possibleConstructorReturn(this, (Discover.__proto__ || Object.getPrototypeOf(Discover)).call(this, props));
+
+		_this4.state = {
+			site: {},
+			oAuth: {},
+			url: ''
+		};
+
+		_this4.handleSubmit = _this4.handleSubmit.bind(_this4);
+		return _this4;
+	}
+
+	_createClass(Discover, [{
+		key: 'handleSubmit',
+		value: function handleSubmit(e) {
+			var _this5 = this;
+
+			e.preventDefault();
+
+			// get the data form the form
+			var data = new FormData(e.target);
+
+			// build the url based on the data passed by the form
+			var _url = 'http://ptt.client?';
+			// https://developer.mozilla.org/en-US/docs/Web/API/FormData/entries
+			var _iteratorNormalCompletion = true;
+			var _didIteratorError = false;
+			var _iteratorError = undefined;
+
+			try {
+				for (var _iterator = data.entries()[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+					var pair = _step.value;
+
+					_url += '&' + pair[0] + '=' + encodeURIComponent(pair[1]);
+				}
+			} catch (err) {
+				_didIteratorError = true;
+				_iteratorError = err;
+			} finally {
+				try {
+					if (!_iteratorNormalCompletion && _iterator.return) {
+						_iterator.return();
+					}
+				} finally {
+					if (_didIteratorError) {
+						throw _iteratorError;
+					}
+				}
+			}
+
+			console.log(_url);
+
+			if ('discover' === data.get('step')) {
+				// AJAX call the get credentials
+				fetch(_url, {
+					method: 'GET',
+					mode: 'cors'
+				}).then(function (r) {
+					r.json().then(function (t) {
+						_this5.setState({ site: t });
+					});
+				});
+			} else {
+				// window.open(_url,'_blank');
+				document.getElementById('app').innerHTML = '<iframe src="' + _url + '" height="400" width="320"></iframe>';
+				// , function(tab){
+				// 	ptt.auth_tab = tab.id;
+				// 	// console.log(ptt.auth_tab);
+				// 	setStoredObject( 'ptt', ptt );
+				// }
+			}
+		}
+
+		// handleSubmit(e) {
+		// 	const uri = document.getElementById( 'uri' ).value;
+
+		// 	console.log( uri );
+
+		// 	fetch( 'http://ptt.client?step=discover&uri='+uri, {
+		// 		method: 'GET',
+		// 		mode: 'cors',
+		// 	})
+		// 	.then( r => {
+		// 		return r.json()
+		// 	})
+		// 	.then( t => {
+		// 		o.append( t )
+		// 		console.log(o)
+		// 	});
+
+		// 	e.preventDefault();
+		// }
+
+	}, {
+		key: 'render',
+		value: function render() {
+			var fields = 'undefined' !== typeof this.state.site.site_base ? _react2.default.createElement(DiscoverCredentials, { siteBase: this.state.site.site_base, siteAuthUrls: this.state.site.site_auth_urls, onSubmit: this.handleSubmit }) : _react2.default.createElement(DiscoverSite, { onSubmit: this.handleSubmit });
+
+			return _react2.default.createElement(
+				'div',
+				null,
+				fields,
+				_react2.default.createElement(
+					'div',
+					null,
+					_react2.default.createElement(
+						'pre',
+						null,
+						'Site: ',
+						JSON.stringify(this.state)
+					)
+				)
+			);
+		}
+	}]);
+
+	return Discover;
+}(_react2.default.Component);
+
+var Dashboard = function (_React$Component4) {
+	_inherits(Dashboard, _React$Component4);
+
+	function Dashboard(props) {
+		_classCallCheck(this, Dashboard);
+
+		return _possibleConstructorReturn(this, (Dashboard.__proto__ || Object.getPrototypeOf(Dashboard)).call(this, props));
+	}
+
+	_createClass(Dashboard, [{
+		key: 'render',
+		value: function render() {
+			return _react2.default.createElement(
+				'div',
+				null,
+				'Dashboard'
+			);
+		}
+	}]);
+
+	return Dashboard;
+}(_react2.default.Component);
+
 // get the stored object in JSON format along with the url for client
-var PTT = function (_React$Component) {
-	_inherits(PTT, _React$Component);
+
+
+var PTT = function (_React$Component5) {
+	_inherits(PTT, _React$Component5);
 
 	function PTT(props) {
 		_classCallCheck(this, PTT);
 
-		var _this2 = _possibleConstructorReturn(this, (PTT.__proto__ || Object.getPrototypeOf(PTT)).call(this, props));
+		var _this7 = _possibleConstructorReturn(this, (PTT.__proto__ || Object.getPrototypeOf(PTT)).call(this, props));
 
-		_this2.state = {
-			ptt: _this2.getStored(),
+		_this7.state = {
+			ptt: getStoredPtt(),
 			url: ''
 		};
-		return _this2;
+		return _this7;
 	}
 
 	_createClass(PTT, [{
 		key: 'componentDidMount',
 		value: function componentDidMount() {
-			fetch(this.buildUrl()).then(function (r) {
-				return r.text().then(function (t) {
-					return console.log(t);
-				});
-			});
+			var view = !Object.keys(this.state.ptt).length > 0 ? _react2.default.createElement(Discover, null) : _react2.default.createElement(Dashboard, null);
+
+			_reactDom2.default.render(view, document.getElementById('app'));
 		}
 	}, {
 		key: 'render',
 		value: function render() {
-			var text = 'Stored Object is empty.';
-			if (Object.keys(this.state.ptt).length > 0) {
-				text = 'Stored Object is NOT empty.';
-			}
-
 			return _react2.default.createElement(
 				'div',
 				null,
-				_react2.default.createElement(
-					'p',
-					null,
-					text
-				),
 				_react2.default.createElement(
 					'p',
 					null,
@@ -75,22 +294,6 @@ var PTT = function (_React$Component) {
 			);
 		}
 	}, {
-		key: 'getStored',
-		value: function getStored() {
-			if (localStorage.getItem('ptt')) {
-				// Get!
-				return JSON.parse(localStorage.getItem('ptt'));
-			} else {
-				// New!
-				return {};
-			}
-		}
-	}, {
-		key: 'setStored',
-		value: function setStored(object) {
-			localStorage.setItem('ptt', JSON.stringify(object));
-		}
-	}, {
 		key: 'buildUrl',
 		value: function buildUrl() {
 			// if ( Object.keys( this.state.ptt ).length > 1 ) {
@@ -100,7 +303,6 @@ var PTT = function (_React$Component) {
    		'&client_secret='     + encodeURIComponent( ptt.client_secret ) +
    		'&token_credentials=' + encodeURIComponent( ptt.token_credentials );*/
 			var url = 'http://ptt.client?step=ptt-details' + '&site_base=' + encodeURIComponent('http://time.vallgroup.com/wp-json/') + '&client_key=' + encodeURIComponent('zyzSVcThUzvr') + '&client_secret=' + encodeURIComponent('kvdxdEEZjIsJfM6fZOHhbC0etrPBVXvotfoh0JiCzBCHhgSN') + '&token_credentials=' + encodeURIComponent('O:49:"League\OAuth1\Client\Credentials\TokenCredentials":2:{s:13:"*identifier";s:24:"oAXrp4Rzhie5wrwzVEQs2W0Q";s:9:"*secret";s:48:"e0L1WqHiGZSWhalqVFK1AENtYqxc8hYEVHvpuXrB8z56msWO";}');
-			// ?site_base=http%3A%2F%2Flocalhost%2Ftest%2Fpremisesplitview%2F&client_key=I9aT2lBzYE2n&client_secret=0WwKpqHwgoVOgwwI7HgyjdAItd4DLZd8wEIQ2R6eRp0Lvqd8&token_credentials=O%3A49%3A%22League%5COAuth1%5CClient%5CCredentials%5CTokenCredentials%22%3A2%3A%7Bs%3A13%3A%22%00%2A%00identifier%22%3Bs%3A24%3A%229xMnHuPSmJrLKaWlyEDBytRu%22%3Bs%3A9%3A%22%00%2A%00secret%22%3Bs%3A48%3A%22z66bCzlBQX9smdjsx3ROS89ltMq7UZaej6YJ56dC3FmiZDbg%22%3B%7D
 			return url; //this.setState({url: url});
 			// }
 		}
@@ -110,6 +312,28 @@ var PTT = function (_React$Component) {
 }(_react2.default.Component);
 
 ;
+// Init
+_reactDom2.default.render(_react2.default.createElement(PTT, null), document.getElementById('root'));
+
+/*
+	Helpers
+ */
+
+function getStoredPtt() {
+	if (localStorage.getItem('ptt')) {
+		// Get!
+		return JSON.parse(localStorage.getItem('ptt'));
+	} else {
+		// New!
+		return {};
+	}
+}
+
+function setStoredPtt(object) {
+	localStorage.setItem('ptt', JSON.stringify(object));
+	console.log('PTT has been store locally:');
+	console.log(getStoredPtt());
+}
 
 /**
  * New timer button
@@ -117,18 +341,18 @@ var PTT = function (_React$Component) {
  * Dsiplays the new timer button and handles click event
  */
 
-var NewTimerBtn = function (_React$Component2) {
-	_inherits(NewTimerBtn, _React$Component2);
+var NewTimerBtn = function (_React$Component6) {
+	_inherits(NewTimerBtn, _React$Component6);
 
 	function NewTimerBtn(props) {
 		_classCallCheck(this, NewTimerBtn);
 
-		var _this3 = _possibleConstructorReturn(this, (NewTimerBtn.__proto__ || Object.getPrototypeOf(NewTimerBtn)).call(this, props));
+		var _this8 = _possibleConstructorReturn(this, (NewTimerBtn.__proto__ || Object.getPrototypeOf(NewTimerBtn)).call(this, props));
 
-		_this3.state = { text: 'New Timer' };
+		_this8.state = { text: 'New Timer' };
 
-		_this3.handleClick = _this3.handleClick.bind(_this3);
-		return _this3;
+		_this8.handleClick = _this8.handleClick.bind(_this8);
+		return _this8;
 	}
 
 	_createClass(NewTimerBtn, [{
@@ -157,18 +381,18 @@ var NewTimerBtn = function (_React$Component2) {
  */
 
 
-var NewTimerForm = function (_React$Component3) {
-	_inherits(NewTimerForm, _React$Component3);
+var NewTimerForm = function (_React$Component7) {
+	_inherits(NewTimerForm, _React$Component7);
 
 	function NewTimerForm(props) {
 		_classCallCheck(this, NewTimerForm);
 
-		var _this4 = _possibleConstructorReturn(this, (NewTimerForm.__proto__ || Object.getPrototypeOf(NewTimerForm)).call(this, props));
+		var _this9 = _possibleConstructorReturn(this, (NewTimerForm.__proto__ || Object.getPrototypeOf(NewTimerForm)).call(this, props));
 
-		_this4.state = {};
+		_this9.state = {};
 
-		_this4.handleSubmit = _this4.handleSubmit.bind(_this4);
-		return _this4;
+		_this9.handleSubmit = _this9.handleSubmit.bind(_this9);
+		return _this9;
 	}
 
 	_createClass(NewTimerForm, [{
@@ -224,15 +448,15 @@ var NewTimerForm = function (_React$Component3) {
 	return NewTimerForm;
 }(_react2.default.Component);
 
-var LoadTimers = function (_React$Component4) {
-	_inherits(LoadTimers, _React$Component4);
+var LoadTimers = function (_React$Component8) {
+	_inherits(LoadTimers, _React$Component8);
 
 	function LoadTimers(props) {
 		_classCallCheck(this, LoadTimers);
 
-		var _this5 = _possibleConstructorReturn(this, (LoadTimers.__proto__ || Object.getPrototypeOf(LoadTimers)).call(this, props));
+		var _this10 = _possibleConstructorReturn(this, (LoadTimers.__proto__ || Object.getPrototypeOf(LoadTimers)).call(this, props));
 
-		_this5.state = {
+		_this10.state = {
 			title: 'Loading...',
 			query: {
 				posts: [],
@@ -240,14 +464,14 @@ var LoadTimers = function (_React$Component4) {
 			}
 		};
 
-		_this5.handleClick = _this5.handleClick.bind(_this5);
-		return _this5;
+		_this10.handleClick = _this10.handleClick.bind(_this10);
+		return _this10;
 	}
 
 	_createClass(LoadTimers, [{
 		key: 'componentDidMount',
 		value: function componentDidMount() {
-			var _this6 = this;
+			var _this11 = this;
 
 			console.log(ptt);
 
@@ -256,7 +480,7 @@ var LoadTimers = function (_React$Component4) {
 				// this is a promise. Set state once pormise has settled
 				r.json().then(function (json) {
 					console.log(json);
-					_this6.setState({ title: 'Loaded', query: json });
+					_this11.setState({ title: 'Loaded', query: json });
 				});
 			});
 		}
@@ -303,8 +527,3 @@ var LoadTimers = function (_React$Component4) {
 // 	<NewTimerBtn />,
 // 	document.getElementById('dashboard')
 // );
-
-// output posts
-
-
-_reactDom2.default.render(_react2.default.createElement(PTT, null), document.getElementById('root'));
