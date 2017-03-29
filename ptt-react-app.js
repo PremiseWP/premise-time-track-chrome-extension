@@ -106,13 +106,10 @@ var Discover = function (_React$Component3) {
 	function Discover(props) {
 		_classCallCheck(this, Discover);
 
+		// { site: {}, oAuth: {}, url: '' }
 		var _this4 = _possibleConstructorReturn(this, (Discover.__proto__ || Object.getPrototypeOf(Discover)).call(this, props));
 
-		_this4.state = {
-			site: {},
-			oAuth: {},
-			url: ''
-		};
+		_this4.state = getStoredPtt();
 
 		_this4.handleSubmit = _this4.handleSubmit.bind(_this4);
 		return _this4;
@@ -169,55 +166,31 @@ var Discover = function (_React$Component3) {
 					});
 				});
 			} else {
-				// window.open(_url,'_blank');
-				document.getElementById('app').innerHTML = '<iframe src="' + _url + '" height="400" width="320"></iframe>';
-				// , function(tab){
-				// 	ptt.auth_tab = tab.id;
-				// 	// console.log(ptt.auth_tab);
-				// 	setStoredObject( 'ptt', ptt );
-				// }
+				this.setState({ oAuth: {
+						client_key: data.get('client_key'),
+						client_secret: data.get('client_secret')
+					} });
+				window.open(_url, "Title", "toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=500, height=500, top=" + (screen.height / 2 - 250) + ", left=" + (screen.width / 2 - 250));
 			}
 		}
-
-		// handleSubmit(e) {
-		// 	const uri = document.getElementById( 'uri' ).value;
-
-		// 	console.log( uri );
-
-		// 	fetch( 'http://ptt.client?step=discover&uri='+uri, {
-		// 		method: 'GET',
-		// 		mode: 'cors',
-		// 	})
-		// 	.then( r => {
-		// 		return r.json()
-		// 	})
-		// 	.then( t => {
-		// 		o.append( t )
-		// 		console.log(o)
-		// 	});
-
-		// 	e.preventDefault();
-		// }
-
 	}, {
 		key: 'render',
 		value: function render() {
-			var fields = 'undefined' !== typeof this.state.site.site_base ? _react2.default.createElement(DiscoverCredentials, { siteBase: this.state.site.site_base, siteAuthUrls: this.state.site.site_auth_urls, onSubmit: this.handleSubmit }) : _react2.default.createElement(DiscoverSite, { onSubmit: this.handleSubmit });
+
+			console.log('Discover State:');
+			console.log(this.state);
+			console.log('Stored PTT:');
+			console.log(getStoredPtt());
+
+			var fields = 'undefined' !== typeof this.state.site ? _react2.default.createElement(DiscoverCredentials, { siteBase: this.state.site.site_base, siteAuthUrls: this.state.site.site_auth_urls, onSubmit: this.handleSubmit }) : _react2.default.createElement(DiscoverSite, { onSubmit: this.handleSubmit });
+
+			// before rendering save the PTT object
+			setStoredPtt(this.state);
 
 			return _react2.default.createElement(
 				'div',
 				null,
-				fields,
-				_react2.default.createElement(
-					'div',
-					null,
-					_react2.default.createElement(
-						'pre',
-						null,
-						'Site: ',
-						JSON.stringify(this.state)
-					)
-				)
+				fields
 			);
 		}
 	}]);
@@ -271,7 +244,7 @@ var PTT = function (_React$Component5) {
 		value: function componentDidMount() {
 			var view = !Object.keys(this.state.ptt).length > 0 ? _react2.default.createElement(Discover, null) : _react2.default.createElement(Dashboard, null);
 
-			_reactDom2.default.render(view, document.getElementById('app'));
+			_reactDom2.default.render(_react2.default.createElement(Discover, null), document.getElementById('app'));
 		}
 	}, {
 		key: 'render',
@@ -279,32 +252,8 @@ var PTT = function (_React$Component5) {
 			return _react2.default.createElement(
 				'div',
 				null,
-				_react2.default.createElement(
-					'p',
-					null,
-					'Soterd Object: ',
-					JSON.stringify(this.state.ptt)
-				),
-				_react2.default.createElement(
-					'p',
-					null,
-					'URL: ',
-					this.state.url
-				)
+				'PTT Loaded'
 			);
-		}
-	}, {
-		key: 'buildUrl',
-		value: function buildUrl() {
-			// if ( Object.keys( this.state.ptt ).length > 1 ) {
-			/*const url = 'http://ptt.client';
-   url + '?site_base='         + encodeURIComponent( ptt.site_base ) +
-   		'&client_key='        + encodeURIComponent( ptt.client_key ) +
-   		'&client_secret='     + encodeURIComponent( ptt.client_secret ) +
-   		'&token_credentials=' + encodeURIComponent( ptt.token_credentials );*/
-			var url = 'http://ptt.client?step=ptt-details' + '&site_base=' + encodeURIComponent('http://time.vallgroup.com/wp-json/') + '&client_key=' + encodeURIComponent('zyzSVcThUzvr') + '&client_secret=' + encodeURIComponent('kvdxdEEZjIsJfM6fZOHhbC0etrPBVXvotfoh0JiCzBCHhgSN') + '&token_credentials=' + encodeURIComponent('O:49:"League\OAuth1\Client\Credentials\TokenCredentials":2:{s:13:"*identifier";s:24:"oAXrp4Rzhie5wrwzVEQs2W0Q";s:9:"*secret";s:48:"e0L1WqHiGZSWhalqVFK1AENtYqxc8hYEVHvpuXrB8z56msWO";}');
-			return url; //this.setState({url: url});
-			// }
 		}
 	}]);
 
@@ -331,8 +280,6 @@ function getStoredPtt() {
 
 function setStoredPtt(object) {
 	localStorage.setItem('ptt', JSON.stringify(object));
-	console.log('PTT has been store locally:');
-	console.log(getStoredPtt());
 }
 
 /**

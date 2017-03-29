@@ -59,11 +59,8 @@ class Discover extends React.Component {
 	constructor(props) {
 		super(props);
 
-		this.state = {
-			site: {},
-			oAuth: {},
-			url: ''
-		}
+ 		// { site: {}, oAuth: {}, url: '' }
+		this.state = getStoredPtt()
 
 		this.handleSubmit = this.handleSubmit.bind(this);
 	}
@@ -96,48 +93,32 @@ class Discover extends React.Component {
 			});
 		}
 		else {
-			// window.open(_url,'_blank');
-			document.getElementById('app').innerHTML = '<iframe src="'+_url+'" height="400" width="320"></iframe>';
-			// , function(tab){
-			// 	ptt.auth_tab = tab.id;
-			// 	// console.log(ptt.auth_tab);
-			// 	setStoredObject( 'ptt', ptt );
-			// }
+			this.setState({oAuth: {
+				client_key: data.get('client_key'),
+				client_secret: data.get('client_secret')
+			}});
+			window.open(_url, "Title", "toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=500, height=500, top="+( (screen.height/2) - 250 )+", left="+( (screen.width/2) - 250 ));
 		}
 
 	}
 
-	// handleSubmit(e) {
-	// 	const uri = document.getElementById( 'uri' ).value;
-
-	// 	console.log( uri );
-
-	// 	fetch( 'http://ptt.client?step=discover&uri='+uri, {
-	// 		method: 'GET',
-	// 		mode: 'cors',
-	// 	})
-	// 	.then( r => {
-	// 		return r.json()
-	// 	})
-	// 	.then( t => {
-	// 		o.append( t )
-	// 		console.log(o)
-	// 	});
-
-	// 	e.preventDefault();
-	// }
-
 	render() {
-		const fields = ( 'undefined' !== typeof this.state.site.site_base )
+
+		console.log('Discover State:');
+		console.log(this.state);
+		console.log('Stored PTT:');
+		console.log(getStoredPtt());
+
+		const fields = ( 'undefined' !== typeof this.state.site )
 			? <DiscoverCredentials siteBase={this.state.site.site_base} siteAuthUrls={this.state.site.site_auth_urls} onSubmit={this.handleSubmit} />
 			: <DiscoverSite onSubmit={this.handleSubmit} />;
+
+		// before rendering save the PTT object
+		setStoredPtt(this.state);
 
 		return (
 			<div>
 				{fields}
-				<div>
-					<pre>Site: {JSON.stringify(this.state)}</pre>
-				</div>
 			</div>
 		);
 	}
@@ -165,7 +146,7 @@ class PTT extends React.Component {
 
 		this.state = {
 			ptt: getStoredPtt(),
-			url: ''
+			url: '',
 		}
 	}
 
@@ -175,7 +156,7 @@ class PTT extends React.Component {
 			: <Dashboard />;
 
 		ReactDOM.render(
-			view,
+			<Discover />,
 			document.getElementById('app')
 		);
 	}
@@ -183,26 +164,9 @@ class PTT extends React.Component {
 	render() {
 		return (
 			<div>
-				<p>Soterd Object: {JSON.stringify(this.state.ptt)}</p>
-				<p>URL: {this.state.url}</p>
+				PTT Loaded
 			</div>
 		);
-	}
-
-	buildUrl() {
-		// if ( Object.keys( this.state.ptt ).length > 1 ) {
-			/*const url = 'http://ptt.client';
-			url + '?site_base='         + encodeURIComponent( ptt.site_base ) +
-					'&client_key='        + encodeURIComponent( ptt.client_key ) +
-					'&client_secret='     + encodeURIComponent( ptt.client_secret ) +
-					'&token_credentials=' + encodeURIComponent( ptt.token_credentials );*/
-			const url = 'http://ptt.client?step=ptt-details' +
-			    '&site_base=' + encodeURIComponent( 'http://time.vallgroup.com/wp-json/' ) +
-				'&client_key=' + encodeURIComponent( 'zyzSVcThUzvr' ) +
-				'&client_secret=' + encodeURIComponent( 'kvdxdEEZjIsJfM6fZOHhbC0etrPBVXvotfoh0JiCzBCHhgSN' ) +
-				'&token_credentials=' + encodeURIComponent( 'O:49:"League\OAuth1\Client\Credentials\TokenCredentials":2:{s:13:"*identifier";s:24:"oAXrp4Rzhie5wrwzVEQs2W0Q";s:9:"*secret";s:48:"e0L1WqHiGZSWhalqVFK1AENtYqxc8hYEVHvpuXrB8z56msWO";}' );
-			return url; //this.setState({url: url});
-		// }
 	}
 };
 // Init
@@ -228,8 +192,6 @@ function getStoredPtt() {
 
 function setStoredPtt( object ) {
 	localStorage.setItem( 'ptt', JSON.stringify( object ) );
-	console.log('PTT has been store locally:');
-	console.log(getStoredPtt());
 }
 
 
