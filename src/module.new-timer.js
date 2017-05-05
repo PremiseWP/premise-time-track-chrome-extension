@@ -81,17 +81,25 @@ class NewTimerForm extends React.Component {
 
 	render() {
 		return (
-			<div>
+			<div className="dashboard_box new_timer_form">
 				<form action={this.state.creds.api_url + 'wp/v2/premise_time_tracker'} method="post" onSubmit={this.handleSubmit}>
-					<div>
-						<label htmlFor="title">Title</label><br />
-						<input type="text" name="title" id="title" />
+					<div className="pwp-row not-responsive">
+						<div className="col2 premise-field">
+							<label htmlFor="title">Title</label><br />
+							<input type="text" name="title" id="title" />
+						</div>
+						<div className="col2 premise-field">
+							<label htmlFor="pwptt_hours">Time</label><br />
+							<input type="number" name="pwptt_hours" id="pwptt_hours" />
+						</div>
+						<div className="span12 premise-field">
+							<label htmlFor="pwptt_hours">Time</label><br />
+							<textarea name="pwptt_hours" id="pwptt_hours" />
+						</div>
 					</div>
-					<div>
-						<label htmlFor="pwptt_hours">Time</label><br />
-						<input type="number" name="pwptt_hours" id="pwptt_hours" />
+					<div className="new_timer_form_submit pwp-align-center">
+						<input className="pwp-display-block" type="submit" />
 					</div>
-					<input type="submit" />
 				</form>
 			</div>
 		);

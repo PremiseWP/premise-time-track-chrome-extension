@@ -23143,9 +23143,15 @@ var Dashboard = function (_React$Component) {
 						this.state.site.description
 					)
 				),
+				_react2.default.createElement(NewTimer, null),
 				this.loadTaxonomies()
 			);
 		}
+
+		/**
+   * load taxonomies in dashboard boxes
+   */
+
 	}, {
 		key: 'loadTaxonomies',
 		value: function loadTaxonomies() {
@@ -23399,33 +23405,52 @@ var NewTimerForm = function (_React$Component2) {
 		value: function render() {
 			return _react2.default.createElement(
 				'div',
-				null,
+				{ className: 'dashboard_box new_timer_form' },
 				_react2.default.createElement(
 					'form',
 					{ action: this.state.creds.api_url + 'wp/v2/premise_time_tracker', method: 'post', onSubmit: this.handleSubmit },
 					_react2.default.createElement(
 						'div',
-						null,
+						{ className: 'pwp-row not-responsive' },
 						_react2.default.createElement(
-							'label',
-							{ htmlFor: 'title' },
-							'Title'
+							'div',
+							{ className: 'col2 premise-field' },
+							_react2.default.createElement(
+								'label',
+								{ htmlFor: 'title' },
+								'Title'
+							),
+							_react2.default.createElement('br', null),
+							_react2.default.createElement('input', { type: 'text', name: 'title', id: 'title' })
 						),
-						_react2.default.createElement('br', null),
-						_react2.default.createElement('input', { type: 'text', name: 'title', id: 'title' })
+						_react2.default.createElement(
+							'div',
+							{ className: 'col2 premise-field' },
+							_react2.default.createElement(
+								'label',
+								{ htmlFor: 'pwptt_hours' },
+								'Time'
+							),
+							_react2.default.createElement('br', null),
+							_react2.default.createElement('input', { type: 'number', name: 'pwptt_hours', id: 'pwptt_hours' })
+						),
+						_react2.default.createElement(
+							'div',
+							{ className: 'span12 premise-field' },
+							_react2.default.createElement(
+								'label',
+								{ htmlFor: 'pwptt_hours' },
+								'Time'
+							),
+							_react2.default.createElement('br', null),
+							_react2.default.createElement('textarea', { name: 'pwptt_hours', id: 'pwptt_hours' })
+						)
 					),
 					_react2.default.createElement(
 						'div',
-						null,
-						_react2.default.createElement(
-							'label',
-							{ htmlFor: 'pwptt_hours' },
-							'Time'
-						),
-						_react2.default.createElement('br', null),
-						_react2.default.createElement('input', { type: 'number', name: 'pwptt_hours', id: 'pwptt_hours' })
-					),
-					_react2.default.createElement('input', { type: 'submit' })
+						{ className: 'new_timer_form_submit pwp-align-center' },
+						_react2.default.createElement('input', { className: 'pwp-display-block', type: 'submit' })
+					)
 				)
 			);
 		}
@@ -23453,6 +23478,9 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+/**
+ * Load a taxonomy in the dashboard.
+ */
 var LoadTaxonomy = function (_React$Component) {
 	_inherits(LoadTaxonomy, _React$Component);
 
@@ -23639,7 +23667,6 @@ var LoadTaxonomy = function (_React$Component) {
 		key: 'toggleBoxContent',
 		value: function toggleBoxContent(e) {
 			e.preventDefault();
-
 			$(e.target).parents('.dashboard_box').find('.dashboard_box_content').slideToggle('fast');
 			return false;
 		}

@@ -11,11 +11,11 @@ class Dashboard extends React.Component {
 		this.state = {
 			site: props.site,
 			taxonomies: [{
-				slug: 'premise_time_tracker_client',
+				slug:  'premise_time_tracker_client',
 				title: 'Clients',
 			},
 			{
-				slug: 'premise_time_tracker_project',
+				slug:  'premise_time_tracker_project',
 				title: 'Projects',
 			}]
 		};
@@ -24,15 +24,23 @@ class Dashboard extends React.Component {
 	render() {
 		return (
 			<div id="dashboard">
+
 				<div className="dashboard_header">
 					<h1>{this.state.site.name}</h1>
 					<span>{this.state.site.description}</span>
 				</div>
+
+				<NewTimer />
+
 				{this.loadTaxonomies()}
+
 			</div>
 		);
 	}
 
+	/**
+	 * load taxonomies in dashboard boxes
+	 */
 	loadTaxonomies() {
 		let taxs = [];
 		for (var i = this.state.taxonomies.length - 1; i >= 0; i--) {

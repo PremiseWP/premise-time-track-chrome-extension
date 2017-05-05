@@ -1,7 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-
+/**
+ * Load a taxonomy in the dashboard.
+ */
 class LoadTaxonomy extends React.Component {
 	constructor(props) {
 		super(props);
@@ -14,8 +16,8 @@ class LoadTaxonomy extends React.Component {
 			taxURL: window.PTT.site.url + '/wp-json/wp/v2/' + props.slug + '/', // 'premise_time_tracker_project',
 		};
 
-		this.loadTaxonomy      = this.loadTaxonomy.bind(this);
-		this.closeTaxonomy     = this.closeTaxonomy.bind(this);
+		this.loadTaxonomy     = this.loadTaxonomy.bind(this);
+		this.closeTaxonomy    = this.closeTaxonomy.bind(this);
 		this.toggleBoxContent = this.toggleBoxContent.bind(this);
 	}
 
@@ -122,7 +124,6 @@ class LoadTaxonomy extends React.Component {
 	// toggle box content
 	toggleBoxContent(e) {
 		e.preventDefault();
-
 		$(e.target).parents( '.dashboard_box' ).find( '.dashboard_box_content' ).slideToggle( 'fast' );
 		return false;
 	}
