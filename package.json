@@ -5,6 +5,7 @@
   "main": "ptt-react-app.js",
   "scripts": {
     "build": "webpack",
+    "webpack-v": "webpack --version",
     "babel-v": "babel --version",
     "watch": "babel src --watch --out-file ptt-react-app.js"
   },
@@ -20,7 +21,8 @@
   "homepage": "https://github.com/PremiseWP/premise-time-track-chrome-extension#readme",
   "dependencies": {
     "react": "^15.4.2",
-    "react-dom": "^15.4.2"
+    "react-dom": "^15.4.2",
+    "wpapi": "^1.0.3"
   },
   "devDependencies": {
     "babel-cli": "^6.24.0",

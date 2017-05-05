@@ -1,4 +1,3 @@
-"use strict";
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -19,192 +18,210 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var DiscoverSite = function (_React$Component) {
-	_inherits(DiscoverSite, _React$Component);
+/**
+ * Authenticate with the WP API and save the cookie for credentials used
+ *
+ * @param  {Object}   creds    the credentials to use for authentication
+ * @param  {Function} callback A callback function to call after authentication.
+ *                             Return the authentication object as 'this' argument
+ * @return {void}              does not return anything. saves cookie and calls callback function.
+ */
+function authenticate(creds, callback) {
+	creds = creds || {};
 
-	function DiscoverSite(props) {
-		_classCallCheck(this, DiscoverSite);
+	var _auth = {};
 
-		var _this2 = _possibleConstructorReturn(this, (DiscoverSite.__proto__ || Object.getPrototypeOf(DiscoverSite)).call(this, props));
+	if (creds.api_url) {
+		// verify the site and get authorized.
+		fetch(creds.api_url, {
+			method: 'GET',
+			mode: 'cors'
+		}).then(function (resp) {
+			resp.json().then(function (site) {
+				// save the site
+				_auth.site = site;
+				// get authorized and save the data
+				_auth.auth = wpApiAuth({
+					oauth_consumer_key: creds.key,
+					oauth_secret: creds.secret,
+					url: creds.api_url,
+					urls: _auth.site.authentication.oauth1
+				});
+
+				Cookies.set('ptt_creds', creds);
+
+				window.PTT = _auth;
+
+				if (callback && 'function' == typeof callback) {
+					callback.call(_auth);
+				}
+			});
+		});
+	}
+}
+
+/**
+ * Display a loading icon
+ */
+
+var LoadingIcon = function (_React$Component) {
+	_inherits(LoadingIcon, _React$Component);
+
+	function LoadingIcon(props) {
+		_classCallCheck(this, LoadingIcon);
+
+		var _this = _possibleConstructorReturn(this, (LoadingIcon.__proto__ || Object.getPrototypeOf(LoadingIcon)).call(this, props));
+
+		_this.state = {
+			size: '3em',
+			icon: 'fa-spinner',
+			align: 'center'
+		};
+		return _this;
+	}
+
+	_createClass(LoadingIcon, [{
+		key: 'render',
+		value: function render() {
+			var divStyle = {
+				textAlign: this.state.align
+			};
+
+			var iconStyle = {
+				fontSize: this.state.size
+			};
+
+			return _react2.default.createElement(
+				'div',
+				{ className: 'loading_icon', style: divStyle },
+				_react2.default.createElement('i', { className: 'fa fa-spin ' + this.state.icon, style: iconStyle })
+			);
+		}
+	}]);
+
+	return LoadingIcon;
+}(_react2.default.Component);
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactDom = require('react-dom');
+
+var _reactDom2 = _interopRequireDefault(_reactDom);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+// var WPAPI = require( 'wpapi' );
+
+$(document).ready(function () {
+	// Load it! when document is ready
+	_reactDom2.default.render(_react2.default.createElement(LoadPTT, null), document.getElementById('app'));
+});
+
+/**
+ * Load the timer dashboard or discover view.
+ *
+ * if the creds are saved in a cookie it attempts to load the dashboard using those credentials.
+ * Otherwise, it loads the Discover view to begin authentication.
+ */
+
+var LoadPTT = function (_React$Component) {
+	_inherits(LoadPTT, _React$Component);
+
+	function LoadPTT(props) {
+		_classCallCheck(this, LoadPTT);
+
+		var _this2 = _possibleConstructorReturn(this, (LoadPTT.__proto__ || Object.getPrototypeOf(LoadPTT)).call(this, props));
 
 		_this2.state = {
-			onSubmit: props.onSubmit
+			creds: Cookies.getJSON('ptt_creds') || {},
+			view: _react2.default.createElement(LoadingIcon, null)
 		};
 		return _this2;
 	}
 
-	_createClass(DiscoverSite, [{
-		key: 'render',
-		value: function render() {
-			return _react2.default.createElement(
-				'div',
-				null,
-				_react2.default.createElement(
-					'form',
-					{ onSubmit: this.state.onSubmit },
-					_react2.default.createElement('input', { type: 'hidden', value: 'discover', name: 'step', id: 'step' }),
-					_react2.default.createElement('input', { type: 'url', name: 'uri', id: 'uri', defaultValue: 'http://time.vallgroup.com' }),
-					_react2.default.createElement('br', null),
-					_react2.default.createElement('input', { type: 'submit' })
-				)
-			);
-		}
-	}]);
+	_createClass(LoadPTT, [{
+		key: 'componentDidMount',
+		value: function componentDidMount() {
+			if (Object.keys(this.state.creds).length > 0) {
 
-	return DiscoverSite;
-}(_react2.default.Component);
-
-var DiscoverCredentials = function (_React$Component2) {
-	_inherits(DiscoverCredentials, _React$Component2);
-
-	function DiscoverCredentials(props) {
-		_classCallCheck(this, DiscoverCredentials);
-
-		var _this3 = _possibleConstructorReturn(this, (DiscoverCredentials.__proto__ || Object.getPrototypeOf(DiscoverCredentials)).call(this, props));
-
-		_this3.state = {
-			onSubmit: props.onSubmit,
-			siteBase: props.siteBase,
-			siteAuthUrls: props.siteAuthUrls
-		};
-		return _this3;
-	}
-
-	_createClass(DiscoverCredentials, [{
-		key: 'render',
-		value: function render() {
-			return _react2.default.createElement(
-				'div',
-				null,
-				_react2.default.createElement(
-					'form',
-					{ action: 'http://ptt.client', method: 'GET', onSubmit: this.state.onSubmit },
-					_react2.default.createElement('input', { type: 'hidden', value: 'preauth', name: 'step', id: 'step' }),
-					_react2.default.createElement('input', { type: 'hidden', value: this.state.siteBase, name: 'site_base', id: 'site_base' }),
-					_react2.default.createElement('input', { type: 'hidden', value: JSON.stringify(this.state.siteAuthUrls), name: 'site_auth_urls', id: 'site_auth_urls' }),
-					_react2.default.createElement('input', { type: 'hidden', value: window.location, name: 'site_referrer', id: 'site_referrer' }),
-					_react2.default.createElement('input', { type: 'text', name: 'client_key', id: 'key', defaultValue: 'zyzSVcThUzvr' }),
-					_react2.default.createElement('br', null),
-					_react2.default.createElement('input', { type: 'text', name: 'client_secret', id: 'secret', defaultValue: 'kvdxdEEZjIsJfM6fZOHhbC0etrPBVXvotfoh0JiCzBCHhgSN' }),
-					_react2.default.createElement('input', { type: 'submit' })
-				)
-			);
-		}
-	}]);
-
-	return DiscoverCredentials;
-}(_react2.default.Component);
-
-/**
- * Get stored object
- */
-
-
-var Discover = function (_React$Component3) {
-	_inherits(Discover, _React$Component3);
-
-	function Discover(props) {
-		_classCallCheck(this, Discover);
-
-		// { site: {}, oAuth: {}, url: '' }
-		var _this4 = _possibleConstructorReturn(this, (Discover.__proto__ || Object.getPrototypeOf(Discover)).call(this, props));
-
-		_this4.state = getStoredPtt();
-
-		_this4.handleSubmit = _this4.handleSubmit.bind(_this4);
-		return _this4;
-	}
-
-	_createClass(Discover, [{
-		key: 'handleSubmit',
-		value: function handleSubmit(e) {
-			var _this5 = this;
-
-			e.preventDefault();
-
-			// get the data form the form
-			var data = new FormData(e.target);
-
-			// build the url based on the data passed by the form
-			var _url = 'http://ptt.client?';
-			// https://developer.mozilla.org/en-US/docs/Web/API/FormData/entries
-			var _iteratorNormalCompletion = true;
-			var _didIteratorError = false;
-			var _iteratorError = undefined;
-
-			try {
-				for (var _iterator = data.entries()[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-					var pair = _step.value;
-
-					_url += '&' + pair[0] + '=' + encodeURIComponent(pair[1]);
-				}
-			} catch (err) {
-				_didIteratorError = true;
-				_iteratorError = err;
-			} finally {
-				try {
-					if (!_iteratorNormalCompletion && _iterator.return) {
-						_iterator.return();
-					}
-				} finally {
-					if (_didIteratorError) {
-						throw _iteratorError;
-					}
-				}
-			}
-
-			console.log(_url);
-
-			if ('discover' === data.get('step')) {
-				// AJAX call the get credentials
-				fetch(_url, {
-					method: 'GET',
-					mode: 'cors'
-				}).then(function (r) {
-					r.json().then(function (t) {
-						_this5.setState({ site: t });
-					});
+				var _this = this;
+				authenticate(this.state.creds, function () {
+					_this.setState({ view: _react2.default.createElement(Dashboard, { site: this.site }) });
 				});
 			} else {
-				this.setState({ oAuth: {
-						client_key: data.get('client_key'),
-						client_secret: data.get('client_secret')
-					} });
-				window.open(_url, "Title", "toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=500, height=500, top=" + (screen.height / 2 - 250) + ", left=" + (screen.width / 2 - 250));
+				this.setState({
+					view: _react2.default.createElement(Discover, null)
+				});
 			}
 		}
 	}, {
 		key: 'render',
 		value: function render() {
-
-			console.log('Discover State:');
-			console.log(this.state);
-			console.log('Stored PTT:');
-			console.log(getStoredPtt());
-
-			var fields = 'undefined' !== typeof this.state.site ? _react2.default.createElement(DiscoverCredentials, { siteBase: this.state.site.site_base, siteAuthUrls: this.state.site.site_auth_urls, onSubmit: this.handleSubmit }) : _react2.default.createElement(DiscoverSite, { onSubmit: this.handleSubmit });
-
-			// before rendering save the PTT object
-			setStoredPtt(this.state);
-
 			return _react2.default.createElement(
 				'div',
 				null,
-				fields
+				this.state.view
 			);
 		}
 	}]);
 
-	return Discover;
+	return LoadPTT;
 }(_react2.default.Component);
 
-var Dashboard = function (_React$Component4) {
-	_inherits(Dashboard, _React$Component4);
+;
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactDom = require('react-dom');
+
+var _reactDom2 = _interopRequireDefault(_reactDom);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+/**
+ * Display the dashboard
+ */
+var Dashboard = function (_React$Component) {
+	_inherits(Dashboard, _React$Component);
 
 	function Dashboard(props) {
 		_classCallCheck(this, Dashboard);
 
-		return _possibleConstructorReturn(this, (Dashboard.__proto__ || Object.getPrototypeOf(Dashboard)).call(this, props));
+		var _this = _possibleConstructorReturn(this, (Dashboard.__proto__ || Object.getPrototypeOf(Dashboard)).call(this, props));
+
+		_this.state = {
+			site: props.site,
+			taxonomies: [{
+				slug: 'premise_time_tracker_client',
+				title: 'Clients'
+			}, {
+				slug: 'premise_time_tracker_project',
+				title: 'Projects'
+			}]
+		};
+		return _this;
 	}
 
 	_createClass(Dashboard, [{
@@ -212,39 +229,103 @@ var Dashboard = function (_React$Component4) {
 		value: function render() {
 			return _react2.default.createElement(
 				'div',
-				null,
-				'Dashboard'
+				{ id: 'dashboard' },
+				_react2.default.createElement(
+					'div',
+					{ className: 'dashboard_header' },
+					_react2.default.createElement(
+						'h1',
+						null,
+						this.state.site.name
+					),
+					_react2.default.createElement(
+						'span',
+						null,
+						this.state.site.description
+					)
+				),
+				this.loadTaxonomies()
 			);
+		}
+	}, {
+		key: 'loadTaxonomies',
+		value: function loadTaxonomies() {
+			var taxs = [];
+			for (var i = this.state.taxonomies.length - 1; i >= 0; i--) {
+				taxs.push(_react2.default.createElement(LoadTaxonomy, {
+					slug: this.state.taxonomies[i].slug,
+					title: this.state.taxonomies[i].title,
+					key: i }));
+			}
+			return taxs;
 		}
 	}]);
 
 	return Dashboard;
 }(_react2.default.Component);
+'use strict';
 
-// get the stored object in JSON format along with the url for client
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _react = require('react');
 
-var PTT = function (_React$Component5) {
-	_inherits(PTT, _React$Component5);
+var _react2 = _interopRequireDefault(_react);
 
-	function PTT(props) {
-		_classCallCheck(this, PTT);
+var _reactDom = require('react-dom');
 
-		var _this7 = _possibleConstructorReturn(this, (PTT.__proto__ || Object.getPrototypeOf(PTT)).call(this, props));
+var _reactDom2 = _interopRequireDefault(_reactDom);
 
-		_this7.state = {
-			ptt: getStoredPtt(),
-			url: ''
-		};
-		return _this7;
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+/**
+ * Discover View
+ *
+ * This view lets us discover the site that want to work with
+ * and authenticate our user. When finished, it loads the dashboard.
+ */
+var Discover = function (_React$Component) {
+	_inherits(Discover, _React$Component);
+
+	function Discover(props) {
+		_classCallCheck(this, Discover);
+
+		var _this = _possibleConstructorReturn(this, (Discover.__proto__ || Object.getPrototypeOf(Discover)).call(this, props));
+
+		_this.state = { creds: {}, site: {}, auth: {} };
+
+		_this.handleSubmit = _this.handleSubmit.bind(_this);
+		return _this;
 	}
 
-	_createClass(PTT, [{
-		key: 'componentDidMount',
-		value: function componentDidMount() {
-			var view = !Object.keys(this.state.ptt).length > 0 ? _react2.default.createElement(Discover, null) : _react2.default.createElement(Dashboard, null);
+	_createClass(Discover, [{
+		key: 'handleSubmit',
+		value: function handleSubmit(e) {
+			e.preventDefault();
 
-			_reactDom2.default.render(_react2.default.createElement(Discover, null), document.getElementById('app'));
+			// get the data form the form
+			var data = new FormData(e.target);
+
+			// save our credentials
+			this.state.creds = {
+				url: data.get('site_url'),
+				key: data.get('client_key'),
+				secret: data.get('client_secret')
+			};
+
+			// needs to be cleaned up to check if url already has wp-json
+			this.state.creds.api_url = this.state.creds.url + '/wp-json/';
+
+			// authenticate, save cookie, and load dashboard.
+			authenticate(this.state.creds, function () {
+				var auth = this;
+				_reactDom2.default.render(_react2.default.createElement(Dashboard, { site: auth.site }), document.getElementById('app'));
+			});
 		}
 	}, {
 		key: 'render',
@@ -252,141 +333,200 @@ var PTT = function (_React$Component5) {
 			return _react2.default.createElement(
 				'div',
 				null,
-				'PTT Loaded'
+				_react2.default.createElement(
+					'form',
+					{ onSubmit: this.handleSubmit },
+					_react2.default.createElement(
+						'div',
+						null,
+						_react2.default.createElement(
+							'label',
+							{ htmlFor: 'site_url' },
+							'Site Url'
+						),
+						_react2.default.createElement('br', null),
+						_react2.default.createElement('input', { type: 'url', name: 'site_url', id: 'site_url', defaultValue: 'http://time.vallgroup.com' })
+					),
+					_react2.default.createElement(
+						'div',
+						null,
+						_react2.default.createElement(
+							'label',
+							{ htmlFor: 'client_key' },
+							'Client Key'
+						),
+						_react2.default.createElement('br', null),
+						_react2.default.createElement('input', { type: 'text', name: 'client_key', id: 'key', defaultValue: 'zyzSVcThUzvr' })
+					),
+					_react2.default.createElement(
+						'div',
+						null,
+						_react2.default.createElement(
+							'label',
+							{ htmlFor: 'client_secret' },
+							'Client Secret'
+						),
+						_react2.default.createElement('br', null),
+						_react2.default.createElement('input', { type: 'text', name: 'client_secret', id: 'secret', defaultValue: 'kvdxdEEZjIsJfM6fZOHhbC0etrPBVXvotfoh0JiCzBCHhgSN' })
+					),
+					_react2.default.createElement('input', { type: 'submit' })
+				)
 			);
 		}
 	}]);
 
-	return PTT;
+	return Discover;
 }(_react2.default.Component);
+'use strict';
 
-;
-// Init
-_reactDom2.default.render(_react2.default.createElement(PTT, null), document.getElementById('root'));
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-/*
-	Helpers
- */
+var _react = require('react');
 
-function getStoredPtt() {
-	if (localStorage.getItem('ptt')) {
-		// Get!
-		return JSON.parse(localStorage.getItem('ptt'));
-	} else {
-		// New!
-		return {};
-	}
-}
+var _react2 = _interopRequireDefault(_react);
 
-function setStoredPtt(object) {
-	localStorage.setItem('ptt', JSON.stringify(object));
-}
+var _reactDom = require('react-dom');
+
+var _reactDom2 = _interopRequireDefault(_reactDom);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 /**
- * New timer button
- *
- * Dsiplays the new timer button and handles click event
+ * Display the new timer button
  */
+var NewTimer = function (_React$Component) {
+	_inherits(NewTimer, _React$Component);
 
-var NewTimerBtn = function (_React$Component6) {
-	_inherits(NewTimerBtn, _React$Component6);
+	function NewTimer(props) {
+		_classCallCheck(this, NewTimer);
 
-	function NewTimerBtn(props) {
-		_classCallCheck(this, NewTimerBtn);
+		var _this = _possibleConstructorReturn(this, (NewTimer.__proto__ || Object.getPrototypeOf(NewTimer)).call(this, props));
 
-		var _this8 = _possibleConstructorReturn(this, (NewTimerBtn.__proto__ || Object.getPrototypeOf(NewTimerBtn)).call(this, props));
+		_this.handleClick = _this.handleClick.bind(_this);
 
-		_this8.state = { text: 'New Timer' };
+		_this.state = {
+			view: ''
+		};
 
-		_this8.handleClick = _this8.handleClick.bind(_this8);
-		return _this8;
+		return _this;
 	}
 
-	_createClass(NewTimerBtn, [{
+	_createClass(NewTimer, [{
 		key: 'handleClick',
-		value: function handleClick() {
-			_reactDom2.default.render(_react2.default.createElement(NewTimerForm, null), document.getElementById('app'));
+		value: function handleClick(e) {
+			e.preventDefault();
+
+			this.setState({
+				view: _react2.default.createElement(NewTimerForm, null)
+			});
 		}
 	}, {
 		key: 'render',
 		value: function render() {
+			if ('' == this.state.view) {
+				this.state.view = _react2.default.createElement(
+					'button',
+					{ id: 'new_timer_btn', className: 'start_timer', onClick: this.handleClick, title: 'New Timer' },
+					_react2.default.createElement('i', { className: 'fa fa-clock-o' })
+				);
+			}
+
 			return _react2.default.createElement(
-				'button',
-				{ onClick: this.handleClick },
-				this.state.text
+				'div',
+				{ id: 'new_timer' },
+				this.state.view
 			);
 		}
 	}]);
 
-	return NewTimerBtn;
+	return NewTimer;
 }(_react2.default.Component);
 
 /**
- * New timer form
  *
- * This form handles creating and editing timers.
  */
 
 
-var NewTimerForm = function (_React$Component7) {
-	_inherits(NewTimerForm, _React$Component7);
+var NewTimerForm = function (_React$Component2) {
+	_inherits(NewTimerForm, _React$Component2);
 
 	function NewTimerForm(props) {
 		_classCallCheck(this, NewTimerForm);
 
-		var _this9 = _possibleConstructorReturn(this, (NewTimerForm.__proto__ || Object.getPrototypeOf(NewTimerForm)).call(this, props));
+		var _this2 = _possibleConstructorReturn(this, (NewTimerForm.__proto__ || Object.getPrototypeOf(NewTimerForm)).call(this, props));
 
-		_this9.state = {};
+		_this2.state = {
+			creds: Cookies.getJSON('ptt_creds')
+		};
 
-		_this9.handleSubmit = _this9.handleSubmit.bind(_this9);
-		return _this9;
+		_this2.handleSubmit = _this2.handleSubmit.bind(_this2);
+		return _this2;
 	}
 
 	_createClass(NewTimerForm, [{
 		key: 'handleSubmit',
 		value: function handleSubmit(e) {
-			console.log(e.target.action);
-
-			fetch(e.target.action).then(function (r) {
-				return console.log(r);
-			});
 			e.preventDefault();
+
+			console.log(e.target.action);
+			// get the data form the form
+			var data = new FormData(e.target);
+
+			var options = {
+				url: e.target.action,
+				method: e.target.method
+			};
+
+			var headers = new Headers();
+
+			// headers.append( 'Authorize', window.PTT.auth.serialize() );
+
+			fetch(e.target.action, {
+				method: e.target.method,
+				headers: headers,
+				data: data
+			}).then(function (r) {
+				console.log(r);
+			});
 		}
 	}, {
 		key: 'render',
 		value: function render() {
 			return _react2.default.createElement(
-				'form',
-				{ action: 'http://ptt.client?step=ptt-save', method: 'post', onSubmit: this.handleSubmit },
+				'div',
+				null,
 				_react2.default.createElement(
-					'div',
-					{ className: 'hidden-fields' },
-					_react2.default.createElement('input', { type: 'hidden', name: 'ptt-id', value: '' })
-				),
-				_react2.default.createElement(
-					'div',
-					null,
-					_react2.default.createElement('input', { type: 'text', name: 'ptt[title]' })
-				),
-				_react2.default.createElement(
-					'div',
-					null,
-					_react2.default.createElement('textarea', { name: 'ptt[content]' })
-				),
-				_react2.default.createElement(
-					'div',
-					null,
-					_react2.default.createElement('input', { type: 'date', name: 'ptt[date]' })
-				),
-				_react2.default.createElement(
-					'div',
-					null,
-					_react2.default.createElement('input', { type: 'number', name: 'ptt[pwptt_hours]', min: '0', step: '0.25', placeholder: '1.75' })
-				),
-				_react2.default.createElement(
-					'div',
-					null,
-					_react2.default.createElement('input', { type: 'submit', value: 'submit' })
+					'form',
+					{ action: this.state.creds.api_url + 'wp/v2/premise_time_tracker', method: 'post', onSubmit: this.handleSubmit },
+					_react2.default.createElement(
+						'div',
+						null,
+						_react2.default.createElement(
+							'label',
+							{ htmlFor: 'title' },
+							'Title'
+						),
+						_react2.default.createElement('br', null),
+						_react2.default.createElement('input', { type: 'text', name: 'title', id: 'title' })
+					),
+					_react2.default.createElement(
+						'div',
+						null,
+						_react2.default.createElement(
+							'label',
+							{ htmlFor: 'pwptt_hours' },
+							'Time'
+						),
+						_react2.default.createElement('br', null),
+						_react2.default.createElement('input', { type: 'number', name: 'pwptt_hours', id: 'pwptt_hours' })
+					),
+					_react2.default.createElement('input', { type: 'submit' })
 				)
 			);
 		}
@@ -394,83 +534,217 @@ var NewTimerForm = function (_React$Component7) {
 
 	return NewTimerForm;
 }(_react2.default.Component);
+'use strict';
 
-var LoadTimers = function (_React$Component8) {
-	_inherits(LoadTimers, _React$Component8);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	function LoadTimers(props) {
-		_classCallCheck(this, LoadTimers);
+var _react = require('react');
 
-		var _this10 = _possibleConstructorReturn(this, (LoadTimers.__proto__ || Object.getPrototypeOf(LoadTimers)).call(this, props));
+var _react2 = _interopRequireDefault(_react);
 
-		_this10.state = {
-			title: 'Loading...',
-			query: {
-				posts: [],
-				taxonomies: {}
-			}
-		};
+var _reactDom = require('react-dom');
 
-		_this10.handleClick = _this10.handleClick.bind(_this10);
-		return _this10;
+var _reactDom2 = _interopRequireDefault(_reactDom);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var LoadTaxonomy = function (_React$Component) {
+	_inherits(LoadTaxonomy, _React$Component);
+
+	function LoadTaxonomy(props) {
+		_classCallCheck(this, LoadTaxonomy);
+
+		var _this = _possibleConstructorReturn(this, (LoadTaxonomy.__proto__ || Object.getPrototypeOf(LoadTaxonomy)).call(this, props));
+
+		_this.state = {
+			posts: [],
+			view: _react2.default.createElement(LoadingIcon, null),
+			title: props.title || '',
+			slug: props.slug || '',
+			taxURL: window.PTT.site.url + '/wp-json/wp/v2/' + props.slug + '/' };
+
+		_this.loadTaxonomy = _this.loadTaxonomy.bind(_this);
+		_this.closeTaxonomy = _this.closeTaxonomy.bind(_this);
+		_this.toggleBoxContent = _this.toggleBoxContent.bind(_this);
+		return _this;
 	}
 
-	_createClass(LoadTimers, [{
+	// show the project module
+
+
+	_createClass(LoadTaxonomy, [{
+		key: 'render',
+		value: function render() {
+			return _react2.default.createElement(
+				'div',
+				{ id: this.state.title.toLowerCase(), className: 'dashboard_box' },
+				_react2.default.createElement(
+					'div',
+					{ className: 'dashboard_box_header' },
+					_react2.default.createElement(
+						'a',
+						{ href: '#', className: 'dashboard_close_box', onClick: this.toggleBoxContent },
+						_react2.default.createElement('i', { className: 'fa fa-caret-up' })
+					),
+					_react2.default.createElement(
+						'h3',
+						null,
+						this.state.title
+					)
+				),
+				_react2.default.createElement(
+					'div',
+					{ className: 'dashboard_box_content' },
+					this.state.view
+				)
+			);
+		}
+
+		// Once loaded, ajax for projects
+
+	}, {
 		key: 'componentDidMount',
 		value: function componentDidMount() {
-			var _this11 = this;
+			var _this2 = this;
 
-			console.log(ptt);
-
-			var _this = this;
-			fetch(ptt.url).then(function (r) {
-				// this is a promise. Set state once pormise has settled
-				r.json().then(function (json) {
-					console.log(json);
-					_this11.setState({ title: 'Loaded', query: json });
+			// get projects list
+			fetch(this.state.taxURL).then(function (response) {
+				response.json().then(function (_terms) {
+					// prepare the list of projects
+					var list = [];
+					for (var i = _terms.length - 1; i >= 0; i--) {
+						list.push(_react2.default.createElement(
+							'li',
+							{ className: 'tax_li', key: _terms[i].id },
+							_react2.default.createElement(
+								'a',
+								{ href: '#',
+									onClick: _this2.loadTaxonomy,
+									'data-tax-id': _terms[i].id,
+									'data-tax-name': _terms[i].name,
+									'data-tax-count': _terms[i].count },
+								_terms[i].name
+							)
+						));
+					}
+					// wrap the list before inserting it
+					// and save it to our state object
+					_this2.state.posts = _react2.default.createElement(
+						'ul',
+						{ className: 'taxonomy_list' },
+						list
+					);
+					// update the UI
+					_this2.setState({ view: _this2.state.posts });
 				});
 			});
 		}
+
+		// load a new project
+
 	}, {
-		key: 'handleClick',
-		value: function handleClick() {
-			// handle
-		}
-	}, {
-		key: 'render',
-		value: function render() {
-			// Iterate through the posts, build list
-			var listPosts = this.state.query.posts.map(function (p) {
-				return _react2.default.createElement(
-					'li',
-					{ key: p.id },
-					p.title.rendered
-				);
+		key: 'loadTaxonomy',
+		value: function loadTaxonomy(e) {
+			var _this3 = this;
+
+			e.preventDefault();
+
+			this.setState({ view: _react2.default.createElement(LoadingIcon, null) });
+
+			var _id = e.target.getAttribute('data-tax-id');
+
+			fetch(window.PTT.site.url + '/wp-json/wp/v2/premise_time_tracker/?per_page=100&' + this.state.slug + '=' + _id).then(function (r) {
+				r.json().then(function (timers) {
+
+					var list = [];
+					var total = '0.00';
+					for (var i = timers.length - 1; i >= 0; i--) {
+						list.push(_react2.default.createElement(
+							'li',
+							{ className: 'timer_li', key: timers[i].id },
+							_react2.default.createElement(
+								'span',
+								{ className: 'time' },
+								timers[i].pwptt_hours
+							),
+							_react2.default.createElement(
+								'h2',
+								null,
+								timers[i].title.rendered
+							),
+							_react2.default.createElement('p', { className: 'description', dangerouslySetInnerHTML: { __html: timers[i].content.rendered } })
+						));
+						total = +total + +timers[i].pwptt_hours;
+					}
+					// wrap the list before inserting it
+					// and save it to our state object
+					var ul = _react2.default.createElement(
+						'div',
+						{ className: 'taxonomy_view' },
+						_react2.default.createElement(
+							'div',
+							{ className: 'close_taxonomy' },
+							_react2.default.createElement(
+								'a',
+								{ href: '#', onClick: _this3.closeTaxonomy },
+								_react2.default.createElement('i', { className: 'fa fa-close' })
+							)
+						),
+						_react2.default.createElement(
+							'div',
+							{ className: 'timers_loop' },
+							_react2.default.createElement(
+								'span',
+								null,
+								'Total: ',
+								total
+							),
+							_react2.default.createElement(
+								'ul',
+								{ className: 'timers_list' },
+								list
+							),
+							_react2.default.createElement(
+								'span',
+								null,
+								'Total: ',
+								total
+							)
+						)
+					);
+					// update the UI
+					_this3.setState({ view: ul });
+				});
 			});
-			return _react2.default.createElement(
-				'div',
-				null,
-				_react2.default.createElement(
-					'h3',
-					null,
-					this.state.title
-				),
-				_react2.default.createElement(
-					'ul',
-					null,
-					listPosts
-				),
-				'Count: ',
-				this.state.query.posts.length
-			);
+		}
+
+		// close a project and show back the list
+
+	}, {
+		key: 'closeTaxonomy',
+		value: function closeTaxonomy(e) {
+			e.preventDefault();
+
+			this.setState({ view: this.state.posts });
+		}
+
+		// toggle box content
+
+	}, {
+		key: 'toggleBoxContent',
+		value: function toggleBoxContent(e) {
+			e.preventDefault();
+
+			$(e.target).parents('.dashboard_box').find('.dashboard_box_content').slideToggle('fast');
+			return false;
 		}
 	}]);
 
-	return LoadTimers;
+	return LoadTaxonomy;
 }(_react2.default.Component);
-
-// output the dashboard
-// ReactDOM.render(
-// 	<NewTimerBtn />,
-// 	document.getElementById('dashboard')
-// );

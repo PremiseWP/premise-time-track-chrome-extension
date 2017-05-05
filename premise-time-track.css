@@ -1,54 +1,205 @@
-/**
- * Premise Time Track Chrome Extension CSS.
+/* http://meyerweb.com/eric/tools/css/reset/
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+	font-size: 16px;
+	color: #888;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+h1 {
+	font-size: 2.5em;
+	line-height: 1.8;
+	color: #444;
+}
+
+a {
+	color: #222;
+	text-decoration: none;
+	display: inline-block;
+}
+
+/*
+ Miscellanious
  */
 
-body {
-	width: 336px;
-	margin: 0;
-	background-color: #fff;
-	color: #444;
-	font-size: 16px;
-	line-height: 1.45;
+.loading_icon {
+	padding: 25% 0;
 }
 
-html,
-body {
-	height: 430px;
-}
-
-html,
-body.auth-tab {
-	height: 99.5%;
-}
-
-body.auth-tab {
-	width: inherit;
-}
-
-#ptt-iframe {
-	width: 100%;
-	height: 100%;
-	border: 0;
-}
-
-.loading-spinner {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-}
-
-
-.btn {
-	color: #444FFF;
+.start_timer {
 	display: inline-block;
-	text-decoration: none;
-	padding: 10px 30px;
-	border: 1px solid #ececec;
-	border-radius: 3px;
-	background-color: #fff;
+    padding: 0.1em 0.3em;
+    border: 0.0125em solid #cecece;
+    background: #f4f4f4;
+    font-size: 3em;
+    line-height: 1;
 }
 
-.btn.action {
-	background-color: #206FCC;
-	color: #FFFFFF !important;
+#authenticate {
+	max-width: 80%;
+	margin: 2em auto;
+}
+
+input:not([type="submit"]) {
+	display: block;
+	width: 100%;
+	box-sizing: border-box;
+	padding: 0.3125em;
+	line-height: 1.5;
+	font-size: 0.875em;
+	background: #fff;
+	border: 0.0625em solid #ececec;
+	margin-bottom: 1.25em;
+}
+
+input[type="submit"] {
+	display: inline-block;
+	padding: 0.5em 1.5em;
+	text-transform: uppercase;
+	border: 0.0625em solid #ececec;
+	background: #fff;
+	border-radius: 0.125em;
+}
+
+/*
+ the dashboard
+ */
+
+.dashboard_header {
+	text-align: center;
+	/*box-shadow: 0 0.0125em 0.005em 0.0125em #333;*/
+	margin-bottom: 1em;
+	padding-bottom: 1em;
+}
+
+.dashboard_box {
+	max-width: 90%;
+	border: 0.0125em solid #cecece;
+	border-radius: 0.250em;
+	margin: 1em auto;
+	padding: 0.375em;
+}
+
+.dashboard_box .dashboard_box_header {
+	/*border-bottom: 0.0125em solid #cecece;*/
+	/*margin-bottom: 1em;
+	padding-bottom: 1em;*/
+}
+
+.dashboard_box .dashboard_close_box {
+	float: right;
+	font-size: 1.4em;
+}
+
+.dashboard_box .dashboard_box_header h3 {
+	font-size: 1.5em;
+	font-weight: 600;
+	text-align: center;
+}
+
+.dashboard_box .dashboard_box_header span {
+	font-size: 0.8em;
+	text-align: center;
+}
+
+.dashboard_box .dashboard_box_content {
+	border-top: 0.0125em solid #cecece;
+	padding-top: 0.375em;
+	margin-top: 0.375em;
+	overflow: hidden;
+}
+
+/*
+ Timer
+ */
+
+.timers_list .timer_li {
+	border: 0.0125em solid #cecece;
+	border-radius: 0.250em;
+	margin: 0.375em auto;
+	padding: 0.375em;
+}
+
+.timers_list .timer_li h2 {
+	font-size: 1.5em;
+    margin-bottom: 0.4em;
+    line-height: 1;
+}
+
+.timers_list .timer_li .time {
+	float: right;
+	font-size: 1.5em;
+    line-height: 1;
+}
+
+.timers_list .timer_li .description {
+	line-height: 1.5;
+	font-size: 1em;
+	margin-bottom: 1em;
+}
+
+/*
+ Taxonomies
+ */
+
+.taxonomy_view .close_taxonomy {
+	text-align: right;
+	font-size: 1.5em;
+	color: #000;
+	/*float: right;*/
+	padding: 0 0.0375em;
+}
+.taxonomy_view .close_taxonomy:after {
+	content: '';
+	display: block;
+	clear: both;
+}
+
+.taxonomy_list .tax_li {
+	display: block;
+	padding: 0.375em 0;
+	/*border-bottom: 0.0125em solid #cecece;*/
 }
