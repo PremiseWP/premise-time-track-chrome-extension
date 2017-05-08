@@ -2,16 +2,17 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 /**
- * Discover View
- *
- * This view lets us discover the site that want to work with
- * and authenticate our user. When finished, it loads the dashboard.
+ * Displays and handles the form to discover the site and get the user signed in.
+ * When finished, it loads the dashboard.
  */
 class Discover extends React.Component {
 	constructor(props) {
 		super(props);
 
- 		this.state = { creds: {}, site: {}, auth: {} };
+ 		this.state = {
+ 			message: props.message || 'Let\'s find your site and get you authenticated.',
+ 			processing: false,
+ 		};
 
 		this.handleSubmit = this.handleSubmit.bind(this);
 	}
@@ -19,46 +20,69 @@ class Discover extends React.Component {
 	handleSubmit(e) {
 		e.preventDefault();
 
-		// get the data form the form
-		let data = new FormData(e.target);
+		// loading icon
+		this.setState( {processing: true} );
 
-		// save our credentials
-		this.state.creds = {
+		// get the data form the form
+		const data = new FormData( e.target );
+
+		// bild our credentials object
+		const creds = {
 			url:    data.get( 'site_url' ),
 			key:    data.get( 'client_key' ),
 			secret: data.get( 'client_secret' ),
 		}
 
-		// needs to be cleaned up to check if url already has wp-json
-		this.state.creds.api_url = this.state.creds.url + '/wp-json/';
-
-		// authenticate, save cookie, and load dashboard.
-		authenticate( this.state.creds, function() {
-			var auth = this;
-			ReactDOM.render(
-				<Dashboard site={auth.site} />,
-				document.getElementById('app')
-			);
-		} );
+		// discover the site
+		discoverSite( creds );
 	}
 
 	render() {
+		const view = ( this.state.processing ) ? <LoadingIcon /> : this.theForm();
 		return (
-			<div>
-				<form onSubmit={this.handleSubmit}>
+			<div className="discover_module">
+				<div className="header">
+					<h1>Premise Time Tracker</h1>
+				</div>
+				<div className="container">
+					<div className="message">
+						<p>{this.state.message}</p>
+					</div>
+					{view}
+				</div>
+			</div>
+		);
+	}
+
+	// returns the form
+	theForm() {
+		return (
+			<div className="discover_form">
+				<form id="discover_form" onSubmit={this.handleSubmit}>
 					<div>
 						<label htmlFor="site_url">Site Url</label><br />
-						<input type="url" name="site_url" id="site_url" defaultValue="http://time.vallgroup.com" />
+						<input 	type="url"
+								name="site_url"
+								id="site_url"
+								defaultValue="http://time.vallgroup.com" />
 					</div>
 					<div>
 						<label htmlFor="client_key">Client Key</label><br />
-						<input type="text" name="client_key" id="key" defaultValue="zyzSVcThUzvr" />
+						<input 	type="text"
+								name="client_key"
+								id="key"
+								defaultValue="YOpAWSAJwIVz" />
 					</div>
 					<div>
 						<label htmlFor="client_secret">Client Secret</label><br />
-						<input type="text" name="client_secret" id="secret" defaultValue="kvdxdEEZjIsJfM6fZOHhbC0etrPBVXvotfoh0JiCzBCHhgSN" />
+						<input 	type="text"
+								name="client_secret"
+								id="secret"
+								defaultValue="JZi4vlcL8vf2oDrtkYLmWCWb2NqHaP7Pm1r9mbdY8nGtlRyL" />
 					</div>
-					<input type="submit" />
+					<div className="primary_btn">
+						<input type="submit" />
+					</div>
 				</form>
 			</div>
 		);

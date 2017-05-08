@@ -191,9 +191,9 @@ module.exports = function(o) {
     };
 
     oauth.ajaxBeforeSend = function (xhr, options) {
-    	if (!oauth.authenticated()) {
-    		return;
-    	}
+        if (!oauth.authenticated()) {
+            return;
+        }
 
         var params = timenonce(getAuth(o)),
             oauth_token_secret = token('oauth_token_secret'),
@@ -206,7 +206,7 @@ module.exports = function(o) {
         var canonical_url = parser.origin + parser.pathname;
 
         if (parser.search) {
-        	params = xtend(params, ohauth.stringQs(parser.search.substring(1)));
+            params = xtend(params, ohauth.stringQs(parser.search.substring(1)));
         }
 
         // https://tools.ietf.org/html/rfc5849#section-3.4.1.3.1
@@ -222,7 +222,7 @@ module.exports = function(o) {
             oauth_token_secret,
             ohauth.baseString(method, canonical_url, params));
 
-	    xhr.setRequestHeader( "Authorization", 'OAuth ' + ohauth.authHeader(params) );
+        xhr.setRequestHeader( "Authorization", 'OAuth ' + ohauth.authHeader(params) );
     }
 
     // pre-authorize this object, if we can just get a token and token_secret
@@ -297,167 +297,167 @@ module.exports = function(o) {
 
 },{"ohauth":2,"store":3,"xtend":4}],3:[function(require,module,exports){
 (function(global){;(function(win){
-	var store = {},
-		doc = win.document,
-		localStorageName = 'localStorage',
-		storage
+    var store = {},
+        doc = win.document,
+        localStorageName = 'localStorage',
+        storage
 
-	store.disabled = false
-	store.set = function(key, value) {}
-	store.get = function(key) {}
-	store.remove = function(key) {}
-	store.clear = function() {}
-	store.transact = function(key, defaultVal, transactionFn) {
-		var val = store.get(key)
-		if (transactionFn == null) {
-			transactionFn = defaultVal
-			defaultVal = null
-		}
-		if (typeof val == 'undefined') { val = defaultVal || {} }
-		transactionFn(val)
-		store.set(key, val)
-	}
-	store.getAll = function() {}
-	store.forEach = function() {}
+    store.disabled = false
+    store.set = function(key, value) {}
+    store.get = function(key) {}
+    store.remove = function(key) {}
+    store.clear = function() {}
+    store.transact = function(key, defaultVal, transactionFn) {
+        var val = store.get(key)
+        if (transactionFn == null) {
+            transactionFn = defaultVal
+            defaultVal = null
+        }
+        if (typeof val == 'undefined') { val = defaultVal || {} }
+        transactionFn(val)
+        store.set(key, val)
+    }
+    store.getAll = function() {}
+    store.forEach = function() {}
 
-	store.serialize = function(value) {
-		return JSON.stringify(value)
-	}
-	store.deserialize = function(value) {
-		if (typeof value != 'string') { return undefined }
-		try { return JSON.parse(value) }
-		catch(e) { return value || undefined }
-	}
+    store.serialize = function(value) {
+        return JSON.stringify(value)
+    }
+    store.deserialize = function(value) {
+        if (typeof value != 'string') { return undefined }
+        try { return JSON.parse(value) }
+        catch(e) { return value || undefined }
+    }
 
-	// Functions to encapsulate questionable FireFox 3.6.13 behavior
-	// when about.config::dom.storage.enabled === false
-	// See https://github.com/marcuswestin/store.js/issues#issue/13
-	function isLocalStorageNameSupported() {
-		try { return (localStorageName in win && win[localStorageName]) }
-		catch(err) { return false }
-	}
+    // Functions to encapsulate questionable FireFox 3.6.13 behavior
+    // when about.config::dom.storage.enabled === false
+    // See https://github.com/marcuswestin/store.js/issues#issue/13
+    function isLocalStorageNameSupported() {
+        try { return (localStorageName in win && win[localStorageName]) }
+        catch(err) { return false }
+    }
 
-	if (isLocalStorageNameSupported()) {
-		storage = win[localStorageName]
-		store.set = function(key, val) {
-			if (val === undefined) { return store.remove(key) }
-			storage.setItem(key, store.serialize(val))
-			return val
-		}
-		store.get = function(key) { return store.deserialize(storage.getItem(key)) }
-		store.remove = function(key) { storage.removeItem(key) }
-		store.clear = function() { storage.clear() }
-		store.getAll = function() {
-			var ret = {}
-			store.forEach(function(key, val) {
-				ret[key] = val
-			})
-			return ret
-		}
-		store.forEach = function(callback) {
-			for (var i=0; i<storage.length; i++) {
-				var key = storage.key(i)
-				callback(key, store.get(key))
-			}
-		}
-	} else if (doc.documentElement.addBehavior) {
-		var storageOwner,
-			storageContainer
-		// Since #userData storage applies only to specific paths, we need to
-		// somehow link our data to a specific path.  We choose /favicon.ico
-		// as a pretty safe option, since all browsers already make a request to
-		// this URL anyway and being a 404 will not hurt us here.  We wrap an
-		// iframe pointing to the favicon in an ActiveXObject(htmlfile) object
-		// (see: http://msdn.microsoft.com/en-us/library/aa752574(v=VS.85).aspx)
-		// since the iframe access rules appear to allow direct access and
-		// manipulation of the document element, even for a 404 page.  This
-		// document can be used instead of the current document (which would
-		// have been limited to the current path) to perform #userData storage.
-		try {
-			storageContainer = new ActiveXObject('htmlfile')
-			storageContainer.open()
-			storageContainer.write('<s' + 'cript>document.w=window</s' + 'cript><iframe src="/favicon.ico"></iframe>')
-			storageContainer.close()
-			storageOwner = storageContainer.w.frames[0].document
-			storage = storageOwner.createElement('div')
-		} catch(e) {
-			// somehow ActiveXObject instantiation failed (perhaps some special
-			// security settings or otherwse), fall back to per-path storage
-			storage = doc.createElement('div')
-			storageOwner = doc.body
-		}
-		function withIEStorage(storeFunction) {
-			return function() {
-				var args = Array.prototype.slice.call(arguments, 0)
-				args.unshift(storage)
-				// See http://msdn.microsoft.com/en-us/library/ms531081(v=VS.85).aspx
-				// and http://msdn.microsoft.com/en-us/library/ms531424(v=VS.85).aspx
-				storageOwner.appendChild(storage)
-				storage.addBehavior('#default#userData')
-				storage.load(localStorageName)
-				var result = storeFunction.apply(store, args)
-				storageOwner.removeChild(storage)
-				return result
-			}
-		}
+    if (isLocalStorageNameSupported()) {
+        storage = win[localStorageName]
+        store.set = function(key, val) {
+            if (val === undefined) { return store.remove(key) }
+            storage.setItem(key, store.serialize(val))
+            return val
+        }
+        store.get = function(key) { return store.deserialize(storage.getItem(key)) }
+        store.remove = function(key) { storage.removeItem(key) }
+        store.clear = function() { storage.clear() }
+        store.getAll = function() {
+            var ret = {}
+            store.forEach(function(key, val) {
+                ret[key] = val
+            })
+            return ret
+        }
+        store.forEach = function(callback) {
+            for (var i=0; i<storage.length; i++) {
+                var key = storage.key(i)
+                callback(key, store.get(key))
+            }
+        }
+    } else if (doc.documentElement.addBehavior) {
+        var storageOwner,
+            storageContainer
+        // Since #userData storage applies only to specific paths, we need to
+        // somehow link our data to a specific path.  We choose /favicon.ico
+        // as a pretty safe option, since all browsers already make a request to
+        // this URL anyway and being a 404 will not hurt us here.  We wrap an
+        // iframe pointing to the favicon in an ActiveXObject(htmlfile) object
+        // (see: http://msdn.microsoft.com/en-us/library/aa752574(v=VS.85).aspx)
+        // since the iframe access rules appear to allow direct access and
+        // manipulation of the document element, even for a 404 page.  This
+        // document can be used instead of the current document (which would
+        // have been limited to the current path) to perform #userData storage.
+        try {
+            storageContainer = new ActiveXObject('htmlfile')
+            storageContainer.open()
+            storageContainer.write('<s' + 'cript>document.w=window</s' + 'cript><iframe src="/favicon.ico"></iframe>')
+            storageContainer.close()
+            storageOwner = storageContainer.w.frames[0].document
+            storage = storageOwner.createElement('div')
+        } catch(e) {
+            // somehow ActiveXObject instantiation failed (perhaps some special
+            // security settings or otherwse), fall back to per-path storage
+            storage = doc.createElement('div')
+            storageOwner = doc.body
+        }
+        function withIEStorage(storeFunction) {
+            return function() {
+                var args = Array.prototype.slice.call(arguments, 0)
+                args.unshift(storage)
+                // See http://msdn.microsoft.com/en-us/library/ms531081(v=VS.85).aspx
+                // and http://msdn.microsoft.com/en-us/library/ms531424(v=VS.85).aspx
+                storageOwner.appendChild(storage)
+                storage.addBehavior('#default#userData')
+                storage.load(localStorageName)
+                var result = storeFunction.apply(store, args)
+                storageOwner.removeChild(storage)
+                return result
+            }
+        }
 
-		// In IE7, keys may not contain special chars. See all of https://github.com/marcuswestin/store.js/issues/40
-		var forbiddenCharsRegex = new RegExp("[!\"#$%&'()*+,/\\\\:;<=>?@[\\]^`{|}~]", "g")
-		function ieKeyFix(key) {
-			return key.replace(forbiddenCharsRegex, '___')
-		}
-		store.set = withIEStorage(function(storage, key, val) {
-			key = ieKeyFix(key)
-			if (val === undefined) { return store.remove(key) }
-			storage.setAttribute(key, store.serialize(val))
-			storage.save(localStorageName)
-			return val
-		})
-		store.get = withIEStorage(function(storage, key) {
-			key = ieKeyFix(key)
-			return store.deserialize(storage.getAttribute(key))
-		})
-		store.remove = withIEStorage(function(storage, key) {
-			key = ieKeyFix(key)
-			storage.removeAttribute(key)
-			storage.save(localStorageName)
-		})
-		store.clear = withIEStorage(function(storage) {
-			var attributes = storage.XMLDocument.documentElement.attributes
-			storage.load(localStorageName)
-			for (var i=0, attr; attr=attributes[i]; i++) {
-				storage.removeAttribute(attr.name)
-			}
-			storage.save(localStorageName)
-		})
-		store.getAll = function(storage) {
-			var ret = {}
-			store.forEach(function(key, val) {
-				ret[key] = val
-			})
-			return ret
-		}
-		store.forEach = withIEStorage(function(storage, callback) {
-			var attributes = storage.XMLDocument.documentElement.attributes
-			for (var i=0, attr; attr=attributes[i]; ++i) {
-				callback(attr.name, store.deserialize(storage.getAttribute(attr.name)))
-			}
-		})
-	}
+        // In IE7, keys may not contain special chars. See all of https://github.com/marcuswestin/store.js/issues/40
+        var forbiddenCharsRegex = new RegExp("[!\"#$%&'()*+,/\\\\:;<=>?@[\\]^`{|}~]", "g")
+        function ieKeyFix(key) {
+            return key.replace(forbiddenCharsRegex, '___')
+        }
+        store.set = withIEStorage(function(storage, key, val) {
+            key = ieKeyFix(key)
+            if (val === undefined) { return store.remove(key) }
+            storage.setAttribute(key, store.serialize(val))
+            storage.save(localStorageName)
+            return val
+        })
+        store.get = withIEStorage(function(storage, key) {
+            key = ieKeyFix(key)
+            return store.deserialize(storage.getAttribute(key))
+        })
+        store.remove = withIEStorage(function(storage, key) {
+            key = ieKeyFix(key)
+            storage.removeAttribute(key)
+            storage.save(localStorageName)
+        })
+        store.clear = withIEStorage(function(storage) {
+            var attributes = storage.XMLDocument.documentElement.attributes
+            storage.load(localStorageName)
+            for (var i=0, attr; attr=attributes[i]; i++) {
+                storage.removeAttribute(attr.name)
+            }
+            storage.save(localStorageName)
+        })
+        store.getAll = function(storage) {
+            var ret = {}
+            store.forEach(function(key, val) {
+                ret[key] = val
+            })
+            return ret
+        }
+        store.forEach = withIEStorage(function(storage, callback) {
+            var attributes = storage.XMLDocument.documentElement.attributes
+            for (var i=0, attr; attr=attributes[i]; ++i) {
+                callback(attr.name, store.deserialize(storage.getAttribute(attr.name)))
+            }
+        })
+    }
 
-	try {
-		var testKey = '__storejs__'
-		store.set(testKey, testKey)
-		if (store.get(testKey) != testKey) { store.disabled = true }
-		store.remove(testKey)
-	} catch(e) {
-		store.disabled = true
-	}
-	store.enabled = !store.disabled
+    try {
+        var testKey = '__storejs__'
+        store.set(testKey, testKey)
+        if (store.get(testKey) != testKey) { store.disabled = true }
+        store.remove(testKey)
+    } catch(e) {
+        store.disabled = true
+    }
+    store.enabled = !store.disabled
 
-	if (typeof module != 'undefined' && module.exports) { module.exports = store }
-	else if (typeof define === 'function' && define.amd) { define(store) }
-	else { win.store = store }
+    if (typeof module != 'undefined' && module.exports) { module.exports = store }
+    else if (typeof define === 'function' && define.amd) { define(store) }
+    else { win.store = store }
 
 })(this.window || global);
 
@@ -1158,22 +1158,22 @@ function extend() {
 
     // public methods
     this.hex = function (s) {
-    	return rstr2hex(rstr(s, utf8), hexcase);
+        return rstr2hex(rstr(s, utf8), hexcase);
     };
     this.b64 = function (s) {
-    	return rstr2b64(rstr(s, utf8), b64pad);
+        return rstr2b64(rstr(s, utf8), b64pad);
     };
     this.any = function (s, e) {
-    	return rstr2any(rstr(s, utf8), e);
+        return rstr2any(rstr(s, utf8), e);
     };
     this.hex_hmac = function (k, d) {
-    	return rstr2hex(rstr_hmac(k, d));
+        return rstr2hex(rstr_hmac(k, d));
     };
     this.b64_hmac = function (k, d) {
-    	return rstr2b64(rstr_hmac(k, d), b64pad);
+        return rstr2b64(rstr_hmac(k, d), b64pad);
     };
     this.any_hmac = function (k, d, e) {
-    	return rstr2any(rstr_hmac(k, d), e);
+        return rstr2any(rstr_hmac(k, d), e);
     };
     /**
      * Perform a simple self-test to see if the VM is working
@@ -1190,10 +1190,10 @@ function extend() {
      * @public
      */
     this.setUpperCase = function (a) {
-    	if (typeof a === 'boolean') {
+        if (typeof a === 'boolean') {
         hexcase = a;
       }
-    	return this;
+        return this;
     };
     /**
      * @description Defines a base64 pad string
@@ -1203,7 +1203,7 @@ function extend() {
      */
     this.setPad = function (a) {
       b64pad = a || b64pad;
-    	return this;
+        return this;
     };
     /**
      * @description Defines a base64 pad string
@@ -1212,41 +1212,41 @@ function extend() {
      * @public
      */
     this.setUTF8 = function (a) {
-    	if (typeof a === 'boolean') {
+        if (typeof a === 'boolean') {
         utf8 = a;
       }
-    	return this;
+        return this;
     };
 
     // private methods
 
     /**
-  	 * Calculate the SHA-512 of a raw string
-  	 */
-  	function rstr(s) {
+     * Calculate the SHA-512 of a raw string
+     */
+    function rstr(s) {
       s = (utf8) ? utf8Encode(s) : s;
       return binb2rstr(binb(rstr2binb(s), s.length * 8));
-  	}
+    }
 
     /**
      * Calculate the HMAC-SHA1 of a key and some data (raw strings)
      */
     function rstr_hmac(key, data) {
-    	var bkey, ipad, opad, i, hash;
-    	key = (utf8) ? utf8Encode(key) : key;
-    	data = (utf8) ? utf8Encode(data) : data;
-    	bkey = rstr2binb(key);
+        var bkey, ipad, opad, i, hash;
+        key = (utf8) ? utf8Encode(key) : key;
+        data = (utf8) ? utf8Encode(data) : data;
+        bkey = rstr2binb(key);
 
-    	if (bkey.length > 16) {
+        if (bkey.length > 16) {
         bkey = binb(bkey, key.length * 8);
       }
-    	ipad = Array(16), opad = Array(16);
-    	for (i = 0; i < 16; i+=1) {
-    		ipad[i] = bkey[i] ^ 0x36363636;
-    		opad[i] = bkey[i] ^ 0x5C5C5C5C;
-    	}
-    	hash = binb(ipad.concat(rstr2binb(data)), 512 + data.length * 8);
-    	return binb2rstr(binb(opad.concat(hash), 512 + 160));
+        ipad = Array(16), opad = Array(16);
+        for (i = 0; i < 16; i+=1) {
+            ipad[i] = bkey[i] ^ 0x36363636;
+            opad[i] = bkey[i] ^ 0x5C5C5C5C;
+        }
+        hash = binb(ipad.concat(rstr2binb(data)), 512 + data.length * 8);
+        return binb2rstr(binb(opad.concat(hash), 512 + 160));
     }
 
     /**
@@ -1272,26 +1272,26 @@ function extend() {
         oldd = d;
         olde = e;
 
-      	for (j = 0; j < 80; j+=1)	{
-      	  if (j < 16) {
+        for (j = 0; j < 80; j+=1)   {
+          if (j < 16) {
             w[j] = x[i + j];
           } else {
             w[j] = bit_rol(w[j-3] ^ w[j-8] ^ w[j-14] ^ w[j-16], 1);
           }
-      	  t = safe_add(safe_add(bit_rol(a, 5), sha1_ft(j, b, c, d)),
-      					   safe_add(safe_add(e, w[j]), sha1_kt(j)));
-      	  e = d;
-      	  d = c;
-      	  c = bit_rol(b, 30);
-      	  b = a;
-      	  a = t;
-      	}
+          t = safe_add(safe_add(bit_rol(a, 5), sha1_ft(j, b, c, d)),
+                           safe_add(safe_add(e, w[j]), sha1_kt(j)));
+          e = d;
+          d = c;
+          c = bit_rol(b, 30);
+          b = a;
+          a = t;
+        }
 
-      	a = safe_add(a, olda);
-      	b = safe_add(b, oldb);
-      	c = safe_add(c, oldc);
-      	d = safe_add(d, oldd);
-      	e = safe_add(e, olde);
+        a = safe_add(a, olda);
+        b = safe_add(b, oldb);
+        c = safe_add(c, oldc);
+        d = safe_add(d, oldd);
+        e = safe_add(e, olde);
       }
       return Array(a, b, c, d, e);
     }
@@ -1312,7 +1312,7 @@ function extend() {
      */
     function sha1_kt(t) {
       return (t < 20) ?  1518500249 : (t < 40) ?  1859775393 :
-    		 (t < 60) ? -1894007588 : -899497514;
+             (t < 60) ? -1894007588 : -899497514;
     }
   },
   /**
@@ -2274,47 +2274,47 @@ module.exports = Object.keys || require('./shim');
 
 },{"./shim":8}],8:[function(require,module,exports){
 (function () {
-	"use strict";
+    "use strict";
 
-	// modified from https://github.com/kriskowal/es5-shim
-	var has = Object.prototype.hasOwnProperty,
-		is = require('is'),
-		forEach = require('foreach'),
-		hasDontEnumBug = !({'toString': null}).propertyIsEnumerable('toString'),
-		dontEnums = [
-			"toString",
-			"toLocaleString",
-			"valueOf",
-			"hasOwnProperty",
-			"isPrototypeOf",
-			"propertyIsEnumerable",
-			"constructor"
-		],
-		keysShim;
+    // modified from https://github.com/kriskowal/es5-shim
+    var has = Object.prototype.hasOwnProperty,
+        is = require('is'),
+        forEach = require('foreach'),
+        hasDontEnumBug = !({'toString': null}).propertyIsEnumerable('toString'),
+        dontEnums = [
+            "toString",
+            "toLocaleString",
+            "valueOf",
+            "hasOwnProperty",
+            "isPrototypeOf",
+            "propertyIsEnumerable",
+            "constructor"
+        ],
+        keysShim;
 
-	keysShim = function keys(object) {
-		if (!is.object(object) && !is.array(object)) {
-			throw new TypeError("Object.keys called on a non-object");
-		}
+    keysShim = function keys(object) {
+        if (!is.object(object) && !is.array(object)) {
+            throw new TypeError("Object.keys called on a non-object");
+        }
 
-		var name, theKeys = [];
-		for (name in object) {
-			if (has.call(object, name)) {
-				theKeys.push(name);
-			}
-		}
+        var name, theKeys = [];
+        for (name in object) {
+            if (has.call(object, name)) {
+                theKeys.push(name);
+            }
+        }
 
-		if (hasDontEnumBug) {
-			forEach(dontEnums, function (dontEnum) {
-				if (has.call(object, dontEnum)) {
-					theKeys.push(dontEnum);
-				}
-			});
-		}
-		return theKeys;
-	};
+        if (hasDontEnumBug) {
+            forEach(dontEnums, function (dontEnum) {
+                if (has.call(object, dontEnum)) {
+                    theKeys.push(dontEnum);
+                }
+            });
+        }
+        return theKeys;
+    };
 
-	module.exports = keysShim;
+    module.exports = keysShim;
 }());
 
 

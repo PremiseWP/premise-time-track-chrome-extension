@@ -13,11 +13,11 @@ class LoadTaxonomy extends React.Component {
 			view:   <LoadingIcon />,
 			title: props.title || '',
 			slug: props.slug || '',
-			taxURL: window.PTT.site.url + '/wp-json/wp/v2/' + props.slug + '/', // 'premise_time_tracker_project',
+			taxURL: PTT.site.url + '/wp-json/wp/v2/' + props.slug + '/', // 'premise_time_tracker_project',
 		};
 
-		this.loadTaxonomy     = this.loadTaxonomy.bind(this);
-		this.closeTaxonomy    = this.closeTaxonomy.bind(this);
+		this.loadTaxonomy      = this.loadTaxonomy.bind(this);
+		this.closeTaxonomy     = this.closeTaxonomy.bind(this);
 		this.toggleBoxContent = this.toggleBoxContent.bind(this);
 	}
 

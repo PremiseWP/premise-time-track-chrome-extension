@@ -9,7 +9,7 @@ class Dashboard extends React.Component {
 		super(props);
 
 		this.state = {
-			site: props.site,
+			site: PTT.site || {},
 			taxonomies: [{
 				slug:  'premise_time_tracker_client',
 				title: 'Clients',
@@ -30,7 +30,7 @@ class Dashboard extends React.Component {
 					<span>{this.state.site.description}</span>
 				</div>
 
-				<NewTimer />
+				<NewTimerForm />
 
 				{this.loadTaxonomies()}
 

@@ -34,9 +34,10 @@ footer, header, hgroup, menu, nav, section {
 	display: block;
 }
 body {
-	line-height: 1;
+	line-height: 1.5;
 	font-size: 16px;
-	color: #888;
+	color: #444;
+	font-family: 'Open Sans', Arial, sans-serif;
 }
 ol, ul {
 	list-style: none;
@@ -53,17 +54,85 @@ table {
 	border-collapse: collapse;
 	border-spacing: 0;
 }
+label {
+	font-size: inherit;
+    margin-bottom: 0.25em;
+    display: inline-block;
+    text-transform: uppercase;
+}
+textarea,
+input:not([type="submit"]) {
+	display: block;
+	width: 100%;
+	box-sizing: border-box;
+	padding: 0.375em;
+	line-height: 1.5;
+	height: auto;
+	font-size: inherit;
+	background: #fff;
+	border: 0.0625em solid #ececec;
+	margin-bottom: 1.25em;
+}
+input[type="submit"] {
+	display: inline-block;
+	padding: 0.5em 1.5em;
+	text-transform: uppercase;
+	border: 0.0625em solid #ececec;
+	background: #fff;
+	border-radius: 0.125em;
+	font-size: inherit;
+}
 
 h1 {
-	font-size: 2.5em;
+	font-size: 2em;
 	line-height: 1.8;
-	color: #444;
+	color: inherit;
+}
+
+p {
+	margin-bottom: 1.3em;
 }
 
 a {
-	color: #222;
+	color: #206FCC;
 	text-decoration: none;
 	display: inline-block;
+}
+
+/*
+ Miscellanious
+ */
+
+.loading_icon {
+	padding: 25% 0;
+}
+
+.primary_btn a,
+.primary_btn input,
+.primary_btn button {
+	display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.8em 1.6em;
+    text-align: center;
+    text-transform: uppercase;
+    background-color: #206fcc;
+    color: #FFF;
+    font-size: 1em;
+    letter-spacing: 0.125em;
+}
+
+.start_timer {
+	display: inline-block;
+    padding: 0.1em 0.3em;
+    border: 0.0125em solid #cecece;
+    background: #f4f4f4;
+    font-size: 3em;
+    line-height: 1;
+}
+
+.message .error {
+	color: #d20404;
 }
 
 /**
@@ -76,47 +145,29 @@ a {
 	width: 100%;
 }
 
+.header {
+	padding: 1em 0;
+	text-align: center;
+	background-color: #206FCC;
+	margin-bottom: 1em;
+	display: block;
+	color: #FFF;
+}
+
+.container {
+	max-width: 90%;
+	margin: 0 auto;
+}
+
 /*
- Miscellanious
+ Discover
  */
 
-.loading_icon {
-	padding: 25% 0;
+.discover_module {
 }
 
-.start_timer {
-	display: inline-block;
-    padding: 0.1em 0.3em;
-    border: 0.0125em solid #cecece;
-    background: #f4f4f4;
-    font-size: 3em;
-    line-height: 1;
-}
-
-#authenticate {
-	max-width: 80%;
-	margin: 2em auto;
-}
-
-input:not([type="submit"]) {
-	display: block;
-	width: 100%;
-	box-sizing: border-box;
-	padding: 0.3125em;
-	line-height: 1.5;
-	font-size: 0.875em;
-	background: #fff;
-	border: 0.0625em solid #ececec;
-	margin-bottom: 1.25em;
-}
-
-input[type="submit"] {
-	display: inline-block;
-	padding: 0.5em 1.5em;
-	text-transform: uppercase;
-	border: 0.0625em solid #ececec;
-	background: #fff;
-	border-radius: 0.125em;
+#discover_form {
+	margin: 1em auto;
 }
 
 /*
@@ -223,13 +274,3 @@ input[type="submit"] {
  New Timer
  */
 
-.new_timer_form_submit input {
-	display: block;
-	width: 100%;
-	box-sizing: border-box;
-	padding: 0.5em;
-	text-align: center;
-	text-transform: uppercase;
-	background-color: #206fcc;
-	color: #FFF;
-}

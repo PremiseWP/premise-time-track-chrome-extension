@@ -47,7 +47,7 @@ class NewTimerForm extends React.Component {
 		super(props);
 
 		this.state = {
-			creds: Cookies.getJSON( 'ptt_creds' )
+			formURL: PTT.site.url + '/wp-json/wp/v2/premise_time_tracker'
 		}
 
 		this.handleSubmit = this.handleSubmit.bind(this);
@@ -56,51 +56,65 @@ class NewTimerForm extends React.Component {
 	handleSubmit(e) {
 		e.preventDefault();
 
-		console.log( e.target.action );
-		// get the data form the form
-		let data = new FormData(e.target);
+		var _form = e.target,
+		fields    = $(_form).serializeArray(),
+		url       = _form.action,
+		parser    = '',
+		query;
 
-		let options = {
-			url: e.target.action,
-			method: e.target.method,
+		console.log(fields);
+		// build query
+		for (var i = fields.length - 1; i >= 0; i--) {
+			if ( fields[i].value.length ) {
+				parser += '&' + fields[i].name + '=' + fields[i].value;
+			}
 		}
-
-		var headers = new Headers();
-
-		// headers.append( 'Authorize', window.PTT.auth.serialize() );
-
-		fetch( e.target.action, {
-			method: e.target.method,
-			headers: headers,
-			data: data,
-		} )
-		.then( r => {
-			console.log( r );
+		query = url + '?' + parser.substr(1, parser.length);
+console.log(query);
+		$.ajax( {
+			beforeSend: PTT.auth.ajaxBeforeSend,
+			method: 'POST',
+			url: query,
+		}).done( function( response ) {
+			console.log(response)
 		});
+
 	}
 
 	render() {
 		return (
 			<div className="dashboard_box new_timer_form">
-				<form action={this.state.creds.api_url + 'wp/v2/premise_time_tracker'} method="post" onSubmit={this.handleSubmit}>
-					<div className="pwp-row not-responsive">
-						<div className="col2 premise-field">
-							<label htmlFor="title">Title</label><br />
-							<input type="text" name="title" id="title" />
+				<div className="dashboard_box_header">
+					<h3>New Timer</h3>
+				 </div>
+			 	<div className="dashboard_box_content">
+					<form action={this.state.formURL}
+						  method="post"
+						  onSubmit={this.handleSubmit}>
+
+						<input 	type="hidden"
+								name="status"
+								value="publish" />
+
+						<div className="pwp-row not-responsive">
+							<div className="col2 premise-field">
+								<label htmlFor="title">Title</label><br />
+								<input type="text" name="title" id="title" />
+							</div>
+							<div className="col2 premise-field">
+								<label htmlFor="pwptt_hours">Time</label><br />
+								<input type="number" name="pwptt_hours" id="pwptt_hours" />
+							</div>
+							<div className="span12 premise-field">
+								<label htmlFor="content">Description</label><br />
+								<textarea name="content" id="content" />
+							</div>
 						</div>
-						<div className="col2 premise-field">
-							<label htmlFor="pwptt_hours">Time</label><br />
-							<input type="number" name="pwptt_hours" id="pwptt_hours" />
+						<div className="primary_btn pwp-align-center">
+							<input className="pwp-display-block" type="submit" />
 						</div>
-						<div className="span12 premise-field">
-							<label htmlFor="pwptt_hours">Time</label><br />
-							<textarea name="pwptt_hours" id="pwptt_hours" />
-						</div>
-					</div>
-					<div className="new_timer_form_submit pwp-align-center">
-						<input className="pwp-display-block" type="submit" />
-					</div>
-				</form>
+					</form>
+				</div>
 			</div>
 		);
 	}

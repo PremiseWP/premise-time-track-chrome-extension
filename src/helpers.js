@@ -2,47 +2,54 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 /**
- * Authenticate with the WP API and save the cookie for credentials used
+ * Authenticates our user and saves the site
+ * info as a cookie in our browser.
  *
- * @param  {Object}   creds    the credentials to use for authentication
- * @param  {Function} callback A callback function to call after authentication.
- *                             Return the authentication object as 'this' argument
- * @return {void}              does not return anything. saves cookie and calls callback function.
+ * @param  {Object} creds the credentials to authenticate user
+ * @return {void}
  */
-function authenticate( creds, callback ) {
-	creds = creds || {};
+function discoverSite( creds ) {
+	creds = creds || null;
 
-	var _auth = {};
+	if ( ! creds ) {
+		console.error( 'No URL supplied to discover site.' );
+		return false;
+	}
 
-	if ( creds.api_url ) {
-		// verify the site and get authorized.
-		fetch( creds.api_url, {
-			method: 'GET',
-			mode: 'cors',
-		})
-		.then( resp => {
-			resp.json()
-			.then( site => {
-				// save the site
-				_auth.site = site;
-				// get authorized and save the data
-				_auth.auth = wpApiAuth( {
-					oauth_consumer_key: creds.key,
-					oauth_secret:       creds.secret,
-					url:                creds.api_url,
-					urls:               _auth.site.authentication.oauth1
-				});
+	fetch( creds.url + '/wp-json/' )
+	.then( r => {
+		r.json()
+		.then( s => {
+			// save the site info
+			PTT.site = s;
 
-				Cookies.set( 'ptt_creds', creds );
+			// save the
+			PTT.auth = wpApiAuth( {
+				oauth_consumer_key: creds.key,
+				oauth_secret:       creds.secret,
+				url:                creds.api_url,
+				urls:               s.authentication.oauth1,
+			});
 
-				window.PTT = _auth;
-
-				if ( callback && 'function' == typeof callback ) {
-					callback.call( _auth );
+			PTT.auth.authenticate( function( err, oauth ) {
+				var view;
+				// handle errors first
+				if ( err ) {
+					view = <Discover message={err.responseText} />;
 				}
+				// No errors! sho the dashboard
+				else {
+					view = <Dashboard />;
+					Cookies.set( '_ptt', creds );
+				}
+
+				ReactDOM.render(
+					view,
+					document.getElementById('app')
+				);
 			});
 		});
-	}
+	});
 }
 
 /**
@@ -70,7 +77,54 @@ class LoadingIcon extends React.Component {
 
 		return (
 			<div className="loading_icon" style={divStyle}>
-				<i className={ 'fa fa-spin ' + this.state.icon } style={iconStyle}></i>
+				<i 	className={ 'fa fa-spin ' + this.state.icon }
+					style={iconStyle}></i>
+			</div>
+		);
+	}
+}
+
+/**
+ * Output a dashboard box - in bet does not work when updatin state
+ */
+class DashboardBox extends React.Component {
+	constructor(props) {
+		super(props);
+
+		this.state = {
+			title:   props.title   || '',
+			classes: props.classes || '',
+			content: props.children || '',
+		}
+
+		this.toggleBoxContent = this.toggleBoxContent.bind(this);
+	}
+
+	// toggle box content
+	toggleBoxContent(e) {
+		e.preventDefault();
+		$(e.target).parents( '.dashboard_box' )
+			.find( '.dashboard_box_content' )
+			.slideToggle( 'fast' );
+		return false;
+	}
+
+	render() {
+		console.log( this.state.content );
+		return (
+			<div id={this.state.title.toLowerCase()}
+				 className={'dashboard_box' + this.state.classes}>
+				<div className="dashboard_box_header">
+					<a 	href="#"
+						className="dashboard_close_box"
+						onClick={this.toggleBoxContent}>
+						<i className="fa fa-caret-up" />
+					</a>
+				 	<h3>{this.state.title}</h3>
+				 </div>
+			 	<div className="dashboard_box_content">
+					{this.state.content}
+				</div>
 			</div>
 		);
 	}
