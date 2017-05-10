@@ -50,6 +50,10 @@ q:before, q:after {
 	content: '';
 	content: none;
 }
+code {
+	white-space: nowrap;
+	overflow: auto;
+}
 table {
 	border-collapse: collapse;
 	border-spacing: 0;
@@ -61,17 +65,15 @@ label {
     text-transform: uppercase;
 }
 textarea,
-input:not([type="submit"]) {
-	display: block;
-	width: 100%;
-	box-sizing: border-box;
+input {
 	padding: 0.375em;
 	line-height: 1.5;
-	height: auto;
 	font-size: inherit;
 	background: #fff;
 	border: 0.0625em solid #ececec;
 	margin-bottom: 1.25em;
+	width: 100%;
+	box-sizing: border-box;
 }
 input[type="submit"] {
 	display: inline-block;
@@ -83,10 +85,19 @@ input[type="submit"] {
 	font-size: inherit;
 }
 
+.premise-field {
+	margin-bottom: 0;
+}
+
 h1 {
 	font-size: 2em;
 	line-height: 1.8;
 	color: inherit;
+}
+
+h3 {
+	font-size: 1.5em;
+
 }
 
 p {
@@ -120,19 +131,34 @@ a {
     color: #FFF;
     font-size: 1em;
     letter-spacing: 0.125em;
-}
-
-.start_timer {
-	display: inline-block;
-    padding: 0.1em 0.3em;
-    border: 0.0125em solid #cecece;
-    background: #f4f4f4;
-    font-size: 3em;
-    line-height: 1;
+    border: 0;
+    border-radius: 0.375em;
 }
 
 .message .error {
 	color: #d20404;
+}
+
+.hover {
+  position: relative;
+
+  &:hover &__no-hover {
+    opacity: 0;
+  }
+
+  &:hover &__hover {
+    opacity: 1;
+  }
+
+  &__hover {
+    position: absolute;
+    top: 0;
+    opacity: 0;
+  }
+
+  &__no-hover {
+    opacity: 1;
+  }
 }
 
 /**
@@ -177,8 +203,9 @@ a {
 .dashboard_header {
 	text-align: center;
 	/*box-shadow: 0 0.0125em 0.005em 0.0125em #333;*/
-	margin-bottom: 1em;
+	padding-top: 1em;
 	padding-bottom: 1em;
+	margin-bottom: 1em;
 }
 
 .dashboard_box {
@@ -274,3 +301,72 @@ a {
  New Timer
  */
 
+#new_timer {
+	position: relative;
+	padding: 0 0 2em 0;
+}
+
+#new_timer_btn,
+#stop_timer_btn {
+	display: block;
+	width: 80%;
+    padding: 5em;
+	margin: 0 auto;
+    background: #fff;
+    border-radius: 0.375em;
+    border: 0;
+    box-shadow: 0 0 0.125em #aaa;
+    box-sizing: border-box;
+}
+
+#new_timer_btn svg,
+#stop_timer_btn svg {
+	pointer-events: none !important;
+}
+
+#new_timer_btn path {
+	fill: #099c22;
+}
+#stop_timer_btn path {
+	fill: #d60000;
+}
+
+#new_timer .message {
+	text-align: center;
+	padding: 1.5em;
+}
+
+#new_timer .message .time {
+	color: #d60000;
+}
+
+.new_timer_form {
+	display: block;
+	width: 90%;
+	margin: 1em auto;
+}
+
+.new_timer_form form.hide {
+	display: none;
+}
+
+.new_timer_form .toggle_form {
+	display: inline-block;
+	margin: 0 auto;
+}
+
+.new_timer_form .clients,
+.new_timer_form .projects {
+	margin-bottom: 1.125em;
+}
+
+.new_timer_form .taxonomy_field label > input,
+.new_timer_form .taxonomy_field label > span {
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.new_timer_form .taxonomy_field label > input {
+	margin: 0;
+	margin-right: 0.5em;
+}

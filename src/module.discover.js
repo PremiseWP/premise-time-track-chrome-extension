@@ -9,8 +9,8 @@ class Discover extends React.Component {
 	constructor(props) {
 		super(props);
 
- 		this.state = {
- 			message: props.message || 'Let\'s find your site and get you authenticated.',
+		this.state = {
+ 			message: props.message || 'Let\'s find your site and get you authenticated. Use this url as the callback:',
  			processing: false,
  		};
 
@@ -47,6 +47,7 @@ class Discover extends React.Component {
 				<div className="container">
 					<div className="message">
 						<p>{this.state.message}</p>
+						<code>{window.location.href.replace( 'index.html', 'land.html' )}</code>
 					</div>
 					{view}
 				</div>
@@ -80,9 +81,7 @@ class Discover extends React.Component {
 								id="secret"
 								defaultValue="JZi4vlcL8vf2oDrtkYLmWCWb2NqHaP7Pm1r9mbdY8nGtlRyL" />
 					</div>
-					<div className="primary_btn">
-						<input type="submit" />
-					</div>
+					<PrimaryBtn />
 				</form>
 			</div>
 		);

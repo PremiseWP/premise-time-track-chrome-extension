@@ -16,8 +16,8 @@ class LoadTaxonomy extends React.Component {
 			taxURL: PTT.site.url + '/wp-json/wp/v2/' + props.slug + '/', // 'premise_time_tracker_project',
 		};
 
-		this.loadTaxonomy      = this.loadTaxonomy.bind(this);
-		this.closeTaxonomy     = this.closeTaxonomy.bind(this);
+		this.loadTaxonomy     = this.loadTaxonomy.bind(this);
+		this.closeTaxonomy    = this.closeTaxonomy.bind(this);
 		this.toggleBoxContent = this.toggleBoxContent.bind(this);
 	}
 
@@ -78,7 +78,7 @@ class LoadTaxonomy extends React.Component {
 
 		const _id = e.target.getAttribute( 'data-tax-id' );
 
-		fetch( window.PTT.site.url + '/wp-json/wp/v2/premise_time_tracker/?per_page=100&' + this.state.slug + '=' + _id )
+		fetch( PTT.site.url + '/wp-json/wp/v2/premise_time_tracker/?per_page=100&' + this.state.slug + '=' + _id )
 		.then( r => {
 			r.json().then( timers => {
 

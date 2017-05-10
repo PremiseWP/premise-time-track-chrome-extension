@@ -30,9 +30,9 @@ class Dashboard extends React.Component {
 					<span>{this.state.site.description}</span>
 				</div>
 
-				<NewTimerForm />
+				<NewTimer />
 
-				{this.loadTaxonomies()}
+				{/*this.loadTaxonomies()*/}
 
 			</div>
 		);
