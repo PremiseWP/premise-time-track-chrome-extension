@@ -10,7 +10,7 @@ class Discover extends React.Component {
 		super(props);
 
 		this.state = {
- 			message: props.message || 'Let\'s find your site and get you authenticated. Use this url as the callback:',
+ 			message: props.message || 'Let\'s find your site and get you authenticated.',
  			processing: false,
  		};
 
@@ -33,6 +33,18 @@ class Discover extends React.Component {
 			secret: data.get( 'client_secret' ),
 		}
 
+		for ( var i in creds ) {
+			if ( creds.hasOwnProperty( i ) ) {
+				if ( ! creds[i].length ) {
+					this.setState( {
+						message: <span className="error">None of the fields can be empty.</span>,
+						processing: false,
+					});
+					return false;
+				}
+			}
+		}
+
 		// discover the site
 		discoverSite( creds );
 	}
@@ -47,7 +59,10 @@ class Discover extends React.Component {
 				<div className="container">
 					<div className="message">
 						<p>{this.state.message}</p>
-						<code>{window.location.href.replace( 'index.html', 'land.html' )}</code>
+						Use this as your callback:
+						<pre>
+							<code>{window.location.href + 'land.html'}</code>
+						</pre>
 					</div>
 					{view}
 				</div>
@@ -64,22 +79,19 @@ class Discover extends React.Component {
 						<label htmlFor="site_url">Site Url</label><br />
 						<input 	type="url"
 								name="site_url"
-								id="site_url"
-								defaultValue="http://time.vallgroup.com" />
+								id="site_url" />
 					</div>
 					<div>
 						<label htmlFor="client_key">Client Key</label><br />
 						<input 	type="text"
 								name="client_key"
-								id="key"
-								defaultValue="YOpAWSAJwIVz" />
+								id="key" />
 					</div>
 					<div>
 						<label htmlFor="client_secret">Client Secret</label><br />
 						<input 	type="text"
 								name="client_secret"
-								id="secret"
-								defaultValue="JZi4vlcL8vf2oDrtkYLmWCWb2NqHaP7Pm1r9mbdY8nGtlRyL" />
+								id="secret" />
 					</div>
 					<PrimaryBtn />
 				</form>

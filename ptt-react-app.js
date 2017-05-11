@@ -50,7 +50,12 @@ function discoverSite(creds) {
 				var view;
 				// handle errors first
 				if (err) {
-					view = _react2.default.createElement(Discover, { message: err.responseText });
+					var errMsg = _react2.default.createElement(
+						'span',
+						{ className: 'error' },
+						err.responseText
+					);
+					view = _react2.default.createElement(Discover, { message: errMsg });
 				}
 				// No errors! sho the dashboard
 				else {
@@ -463,7 +468,7 @@ var Dashboard = function (_React$Component) {
 				{ id: 'dashboard' },
 				_react2.default.createElement(
 					'div',
-					{ className: 'dashboard_header' },
+					{ className: 'header' },
 					_react2.default.createElement(
 						'h1',
 						null,
@@ -532,7 +537,7 @@ var Discover = function (_React$Component) {
 		var _this = _possibleConstructorReturn(this, (Discover.__proto__ || Object.getPrototypeOf(Discover)).call(this, props));
 
 		_this.state = {
-			message: props.message || 'Let\'s find your site and get you authenticated. Use this url as the callback:',
+			message: props.message || 'Let\'s find your site and get you authenticated.',
 			processing: false
 		};
 
@@ -557,6 +562,22 @@ var Discover = function (_React$Component) {
 				key: data.get('client_key'),
 				secret: data.get('client_secret')
 			};
+
+			for (var i in creds) {
+				if (creds.hasOwnProperty(i)) {
+					if (!creds[i].length) {
+						this.setState({
+							message: _react2.default.createElement(
+								'span',
+								{ className: 'error' },
+								'None of the fields can be empty.'
+							),
+							processing: false
+						});
+						return false;
+					}
+				}
+			}
 
 			// discover the site
 			discoverSite(creds);
@@ -588,10 +609,15 @@ var Discover = function (_React$Component) {
 							null,
 							this.state.message
 						),
+						'Use this as your callback:',
 						_react2.default.createElement(
-							'code',
+							'pre',
 							null,
-							window.location.href.replace('index.html', 'land.html')
+							_react2.default.createElement(
+								'code',
+								null,
+								window.location.href + 'land.html'
+							)
 						)
 					),
 					view
@@ -621,8 +647,7 @@ var Discover = function (_React$Component) {
 						_react2.default.createElement('br', null),
 						_react2.default.createElement('input', { type: 'url',
 							name: 'site_url',
-							id: 'site_url',
-							defaultValue: 'http://time.vallgroup.com' })
+							id: 'site_url' })
 					),
 					_react2.default.createElement(
 						'div',
@@ -635,8 +660,7 @@ var Discover = function (_React$Component) {
 						_react2.default.createElement('br', null),
 						_react2.default.createElement('input', { type: 'text',
 							name: 'client_key',
-							id: 'key',
-							defaultValue: 'YOpAWSAJwIVz' })
+							id: 'key' })
 					),
 					_react2.default.createElement(
 						'div',
@@ -649,8 +673,7 @@ var Discover = function (_React$Component) {
 						_react2.default.createElement('br', null),
 						_react2.default.createElement('input', { type: 'text',
 							name: 'client_secret',
-							id: 'secret',
-							defaultValue: 'JZi4vlcL8vf2oDrtkYLmWCWb2NqHaP7Pm1r9mbdY8nGtlRyL' })
+							id: 'secret' })
 					),
 					_react2.default.createElement(PrimaryBtn, null)
 				)

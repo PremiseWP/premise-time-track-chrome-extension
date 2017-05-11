@@ -25,14 +25,14 @@ class Dashboard extends React.Component {
 		return (
 			<div id="dashboard">
 
-				<div className="dashboard_header">
+				<div className="header">
 					<h1>{this.state.site.name}</h1>
 					<span>{this.state.site.description}</span>
 				</div>
 
 				<NewTimer />
 
-				{/*this.loadTaxonomies()*/}
+				{this.loadTaxonomies()}
 
 			</div>
 		);

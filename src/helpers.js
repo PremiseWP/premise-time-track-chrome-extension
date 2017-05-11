@@ -36,7 +36,8 @@ function discoverSite( creds ) {
 				var view;
 				// handle errors first
 				if ( err ) {
-					view = <Discover message={err.responseText} />;
+					const errMsg = <span className="error">{err.responseText}</span>
+					view = <Discover message={errMsg} />;
 				}
 				// No errors! sho the dashboard
 				else {
